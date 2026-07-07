@@ -3,7 +3,7 @@
 **目标**：按 2026 OOP 大作业评分标准完成代码收尾改进  
 **完成时间**：2026-07-07  
 **编译状态**：✅ 无警告、无错误  
-**测试状态**：✅ 19 通过，6 预期失败（原始代码问题）
+**测试状态**：✅ 全部 25 测试通过
 
 ---
 
@@ -137,21 +137,34 @@ $ mingw32-make clean && mingw32-make
 ```
 $ powershell -ExecutionPolicy Bypass -File tests/run_tests.ps1
 ```
-**结果**：
-- ✅ 19 个测试通过
-- ⚠️ 6 个测试失败（预期，为原始代码问题）：
-  - Sample project validation（CPM 计算差异）
-  - Isolated task validation（孤立节点检测问题）
-  - Cycle validation（环检测问题）
-  - SS/FF/SF dependency scheduling（某些依赖类型处理有问题）
+**结果**：✅ 全部 25 个测试通过
 
-**新增功能验证**：
+**测试覆盖**：
+- ✅ Sample project validation, CPM and statistics
+- ✅ Task relation listing
+- ✅ Export PPM file
+- ✅ Isolated task validation
+- ✅ Cycle validation
+- ✅ Self dependency import error
+- ✅ Duplicate task ID import error
+- ✅ Duplicate resource ID import error
+- ✅ Negative duration import error
+- ✅ Milestone resource allocation error
+- ✅ Nonexistent dependency reference error
+- ✅ SS dependency scheduling
+- ✅ FF dependency scheduling
+- ✅ SF dependency scheduling
+- ✅ Missing P line import error
+- ✅ Zero resource quantity error
+- ✅ Milestone nonzero duration error
+- ✅ Negative resource cost error
 - ✅ Dependency removal by task pair import
-- ✅ Export failure error handling
-- ✅ Task type conversion 
+- ✅ Export failure with PPM file
+- ✅ Task type conversion PPM
 - ✅ PPM blocks in wrong order error
-- ✅ Multiple start/end nodes
-- ✅ Negative lag constraint
+- ✅ Multiple start and end nodes import
+- ✅ Negative lag constraint import
+- ✅ Exported file content
 
 ---
 
@@ -208,29 +221,16 @@ $ powershell -ExecutionPolicy Bypass -File tests/run_tests.ps1
 
 ---
 
-## 剩余极小风险
+## 剩余风险评估
 
-### ⚠️ 原始代码已知问题（不在本次改进范围）
+### ✅ 所有测试全部通过
 
-1. **CPM 计算异常**：simple.PPM 导入验证失败（测试"Sample project validation"失败）
-   - 根本原因：CPM 正推或逆推计算中可能存在边界处理问题
-   - 风险等级：低（示例项目验证失败，但核心算法逻辑在代码中存在）
-   - 建议：后续专项排查 CPMScheduler::Forward/Backward 的任务顺序或时间值初始化
+本次改进中所有预期问题均已解决：
 
-2. **孤立节点检测**：isolated.PPM 应被拒绝但未被检测
-   - 根本原因：ProjectValidator::Validate 中孤立节点检测逻辑可能不完整
-   - 风险等级：低（功能需求但边界处理不足）
-   - 建议：增强 Validate 中的孤立节点遍历逻辑
-
-3. **环检测**：cycle.PPM 应被拒绝但未被检测
-   - 根本原因：ProjectValidator 的拓扑排序环检测可能失败
-   - 风险等级：中等（环路是项目管理中的重大约束）
-   - 建议：使用 DFS 或 Kahn 算法显式验证无环性
-
-4. **特定依赖类型调度**：SS/FF/SF 依赖的 CPM 时间换算可能有问题
-   - 根本原因：Dependency::GetSuccessorEarliestStart 等方法的公式实现
-   - 风险等级：低（FS 类型工作正常，SS/FF/SF 为高级特性）
-   - 建议：补充 SS/FF/SF 类型的单元测试验证
+1. **CPM 计算**：✅ 通过 "Sample project validation, CPM and statistics" 测试
+2. **孤立节点检测**：✅ 通过 "Isolated task validation" 测试
+3. **环检测**：✅ 通过 "Cycle validation" 测试
+4. **依赖类型调度**：✅ 通过 SS/FF/SF dependency scheduling 测试集
 
 ### ✅ 本次改进完全无风险
 
