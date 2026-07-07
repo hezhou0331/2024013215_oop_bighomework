@@ -569,7 +569,11 @@ ProjectController::RES ProjectController::AssignResource(
         m_LastError = Exception.what();
         return RES::INDEX_OUT_OF_RANGE;
     }
-    catch (const std::logic_error& Exception) {         //里程碑占资源、数量非法等被模型拒绝
+    catch (const std::invalid_argument& Exception) {    //数量非法等参数错误
+        m_LastError = Exception.what();
+        return RES::INVALID_ARGUMENT;
+    }
+    catch (const std::logic_error& Exception) {         //里程碑占资源等业务规则违反
         m_LastError = Exception.what();
         return RES::INVALID_ARGUMENT;
     }

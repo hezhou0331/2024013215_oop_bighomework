@@ -102,6 +102,8 @@ private:
     double ReadDouble(const std::string& Prompt) const;
     // 显示提示并读取一整行文本
     std::string ReadText(const std::string& Prompt) const;
+    // 读取非负整数索引，负数输入时提示错误并重试
+    std::size_t GetPositiveIndex(const std::string& Prompt) const;
 };
 
 #endif

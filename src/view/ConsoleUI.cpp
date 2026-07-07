@@ -291,8 +291,7 @@ void ConsoleUI::AddTask() const
 void ConsoleUI::UpdateTask() const
 {
     ProjectController& Controller = ProjectController::GetInstance();
-    std::size_t TaskIndex = static_cast<std::size_t>(
-        ReadInt("Task index: "));                     //待修改任务的容器索引
+    std::size_t TaskIndex = GetPositiveIndex("Task index: ");
     std::string NewName = ReadText("New name: ");     //修改后的任务名称
     int NewDuration = ReadInt("New duration: ");      //修改后的工期，0 将转为里程碑
     ProjectController::RES Result = Controller.UpdateTask(TaskIndex,
@@ -317,8 +316,7 @@ void ConsoleUI::UpdateTask() const
 void ConsoleUI::RemoveTask() const
 {
     ProjectController& Controller = ProjectController::GetInstance();
-    std::size_t TaskIndex = static_cast<std::size_t>(
-        ReadInt("Task index: "));                     //待删除任务的容器索引
+    std::size_t TaskIndex = GetPositiveIndex("Task index: ");
     ProjectController::RES Result = Controller.RemoveTask(TaskIndex);
     if (Result == ProjectController::RES::SUCCESS) {
         std::cout << "Task removed.\n";
@@ -377,8 +375,7 @@ void ConsoleUI::ListTasks() const
 void ConsoleUI::ListTaskRelations() const
 {
     ProjectController& Controller = ProjectController::GetInstance();
-    std::size_t TaskIndex = static_cast<std::size_t>(
-        ReadInt("Task index: "));                     //待查询任务的容器索引
+    std::size_t TaskIndex = GetPositiveIndex("Task index: ");
     ProjectController::TaskInfo QueriedTask;
     ProjectController::TaskInfoList Predecessors;
     ProjectController::TaskInfoList Successors;
@@ -427,10 +424,8 @@ void ConsoleUI::ListTaskRelations() const
 void ConsoleUI::AddDependency() const
 {
     ProjectController& Controller = ProjectController::GetInstance();
-    std::size_t Predecessor = static_cast<std::size_t>(
-        ReadInt("Predecessor index: "));              //前置任务的容器索引
-    std::size_t Successor = static_cast<std::size_t>(
-        ReadInt("Successor index: "));                //后置任务的容器索引
+    std::size_t Predecessor = GetPositiveIndex("Predecessor index: ");
+    std::size_t Successor = GetPositiveIndex("Successor index: ");
     std::string TypeText = ReadText("Type(FS/SS/FF/SF): "); //依赖类型文本
     int LagDays = ReadInt("Lag: ");                   //滞后（正）或提前（负）天数
     ProjectController::RES Result = Controller.AddDependency(Predecessor,
@@ -456,8 +451,7 @@ void ConsoleUI::AddDependency() const
 void ConsoleUI::RemoveDependency() const
 {
     ProjectController& Controller = ProjectController::GetInstance();
-    std::size_t DependencyIndex = static_cast<std::size_t>(
-        ReadInt("Dependency index: "));               //待删除依赖的容器索引
+    std::size_t DependencyIndex = GetPositiveIndex("Dependency index: ");
     ProjectController::RES Result
         = Controller.RemoveDependency(DependencyIndex);
     if (Result == ProjectController::RES::SUCCESS) {
@@ -479,10 +473,8 @@ void ConsoleUI::RemoveDependency() const
 void ConsoleUI::RemoveDependencyByTaskPair() const
 {
     ProjectController& Controller = ProjectController::GetInstance();
-    std::size_t Predecessor = static_cast<std::size_t>(
-        ReadInt("Predecessor task index: "));          //前置任务索引
-    std::size_t Successor = static_cast<std::size_t>(
-        ReadInt("Successor task index: "));            //后置任务索引
+    std::size_t Predecessor = GetPositiveIndex("Predecessor task index: ");
+    std::size_t Successor = GetPositiveIndex("Successor task index: ");
     ProjectController::RES Result
         = Controller.RemoveDependency(Predecessor, Successor);
     if (Result == ProjectController::RES::SUCCESS) {
@@ -574,10 +566,8 @@ void ConsoleUI::ListResources() const
 void ConsoleUI::AssignResource() const
 {
     ProjectController& Controller = ProjectController::GetInstance();
-    std::size_t TaskIndex = static_cast<std::size_t>(
-        ReadInt("Task index: "));                     //目标任务的容器索引
-    std::size_t ResourceIndex = static_cast<std::size_t>(
-        ReadInt("Resource index: "));                 //被分配资源的容器索引
+    std::size_t TaskIndex = GetPositiveIndex("Task index: ");
+    std::size_t ResourceIndex = GetPositiveIndex("Resource index: ");
     int Quantity = ReadInt("Quantity: ");             //占用该资源的数量
     ProjectController::RES Result = Controller.AssignResource(TaskIndex,
                                                               ResourceIndex,
@@ -759,4 +749,25 @@ std::string ConsoleUI::ReadText(const std::string& Prompt) const
         throw std::runtime_error("Input ended.");
     }
     return Text;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       ConsoleUI::GetPositiveIndex
+//【函数功能】       读取一个非负整数作为索引，负数输入时提示错误并重新提示。
+//【参数】           Prompt（输入参数）：显示给用户的提示文本。
+//【返回值】         std::size_t，用户输入的非负整数值；输入结束时抛出异常。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+std::size_t ConsoleUI::GetPositiveIndex(const std::string& Prompt) const
+{
+    int Value = 0;                                    //读取的整数值
+    while (true) {
+        Value = ReadInt(Prompt);                      //读取一个整数
+        if (Value >= 0) {                             //非负数合法
+            return static_cast<std::size_t>(Value);
+        }
+        //负数提示错误并重试
+        std::cout << "Index must be non-negative. Please try again.\n";
+    }
 }

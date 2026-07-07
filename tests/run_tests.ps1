@@ -51,9 +51,9 @@ $Cases = @(
         InputText = @"
 2
 samples\simple.PPM
-15
 16
 17
+18
 0
 "@
         ExpectedTexts = @(
@@ -101,7 +101,7 @@ tests\exported_by_test.PPM
         InputText = @"
 2
 tests\isolated.PPM
-15
+16
 0
 "@
         ExpectedTexts = @(
@@ -115,8 +115,8 @@ tests\isolated.PPM
         InputText = @"
 2
 tests\cycle.PPM
-15
 16
+17
 0
 "@
         ExpectedTexts = @(
@@ -203,8 +203,8 @@ tests\nonexistent_dependency_reference.PPM
         InputText = @"
 2
 tests\ss_dependency.PPM
-15
 16
+17
 0
 "@
         ExpectedTexts = @(
@@ -218,8 +218,8 @@ tests\ss_dependency.PPM
         InputText = @"
 2
 tests\ff_dependency.PPM
-15
 16
+17
 0
 "@
         ExpectedTexts = @(
@@ -233,8 +233,8 @@ tests\ff_dependency.PPM
         InputText = @"
 2
 tests\sf_dependency.PPM
-15
 16
+17
 0
 "@
         ExpectedTexts = @(
