@@ -1,0 +1,12 @@
+# Valid project: SF (Start-to-Finish) with negative lag
+P NegativeSFLagProject
+
+T 1 Task1 5
+T 2 Task2 3
+
+R 101 Resource1 50.0
+
+D 1 2 SF -1
+
+A 1 101 1
+A 2 101 1

@@ -1,0 +1,6 @@
+# Invalid project: dependency points from one task to itself.
+P SelfDependencyProject
+
+T 1 Alpha 2
+
+D 1 1 FS 0

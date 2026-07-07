@@ -1,0 +1,8 @@
+# Invalid project: dependency graph contains a cycle.
+P CycleProject
+
+T 1 Alpha 2
+T 2 Beta 3
+
+D 1 2 FS 0
+D 2 1 FS 0

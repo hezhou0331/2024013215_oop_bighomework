@@ -1,0 +1,9 @@
+# Valid project: SF (Start-to-Finish) dependency
+P SFDepProject
+
+T 1 Task1 3
+T 2 Task2 5
+
+R 101 Resource1 50.0
+
+D 1 2 SF 1

@@ -1,0 +1,6 @@
+# Invalid project: negative resource cost
+P NegativeCostProject
+
+T 1 Task1 2
+
+R 101 Resource1 -50.0

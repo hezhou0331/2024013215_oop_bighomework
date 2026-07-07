@@ -1,0 +1,8 @@
+# Invalid project: zero resource quantity
+P ZeroQuantityProject
+
+T 1 Task1 2
+
+R 101 Resource1 50.0
+
+A 1 101 0

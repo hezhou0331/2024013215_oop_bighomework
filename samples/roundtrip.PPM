@@ -1,0 +1,29 @@
+# Exported by Project Scheduler
+P ProjectDemo
+
+T 0 Requirement 5
+T 1 Design 3
+T 2 Coding 7
+T 3 Testing 4
+T 4 Deployment 2
+M 5 Acceptance 0
+
+R 0 Architect 100
+R 1 SeniorDev 80
+R 2 JuniorDev 50
+R 3 Tester 60
+R 4 MeetingRoom 400
+
+D 0 1 FS 0
+D 1 2 FS 2
+D 2 3 FS -1
+D 3 4 FS 0
+D 2 5 FS 0
+
+A 0 0 1
+A 0 4 3
+A 1 1 2
+A 2 1 2
+A 2 2 1
+A 3 3 2
+A 4 2 1

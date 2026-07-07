@@ -1,0 +1,7 @@
+# Invalid project: dependency references non-existent task
+P NonexistentDepProject
+
+T 1 Task1 2
+T 2 Task2 3
+
+D 1 99 FS 0

@@ -1,0 +1,16 @@
+*.o
+*.obj
+*.exe
+project_scheduler
+project_scheduler.exe
+
+.vscode/
+.idea/
+
+build/
+debug/
+Debug/
+Release/
+
+*.log
+tmp/

@@ -1,0 +1,12 @@
+# Invalid project: negative task ID should be rejected
+P NegativeTaskIDProject
+
+T -1 Task1 5
+T 2 Task2 3
+
+R 101 Resource1 50.0
+
+D 2 1 FS 0
+
+A 1 101 1
+A 2 101 1

@@ -1,0 +1,7 @@
+# Invalid project: milestone task must have zero duration
+P MilestoneNonzeroProject
+
+T 1 Task1 2
+M 2 Milestone 5
+
+D 1 2 FS 0

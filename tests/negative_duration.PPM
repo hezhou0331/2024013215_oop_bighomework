@@ -1,0 +1,6 @@
+# Invalid project: negative task duration
+P NegativeDurationProject
+
+T 1 Task1 -5
+
+R 101 Resource1 50.0

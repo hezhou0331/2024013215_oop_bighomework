@@ -1,0 +1,10 @@
+# Invalid project: milestone task cannot have resource allocation
+P MilestoneResourceProject
+
+T 1 Task1 5
+M 2 Milestone 0
+
+R 101 Resource1 50.0
+
+D 1 2 FS 0
+A 2 101 1

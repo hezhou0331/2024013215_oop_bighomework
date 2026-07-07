@@ -1,0 +1,8 @@
+# Invalid project: task 3 is isolated.
+P IsolatedProject
+
+T 1 Start 2
+T 2 Finish 3
+T 3 Alone 1
+
+D 1 2 FS 0

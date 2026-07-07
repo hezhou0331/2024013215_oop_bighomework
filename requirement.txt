@@ -1,0 +1,11 @@
+开发环境说明
+操作系统版本: Microsoft Windows 11 家庭中文版 10.0.26200 - 64bit
+编辑器版本: Visual Studio Code 1.127.0
+编译器版本: gcc version 15.1.0 (x86_64, MinGW-W64)
+C++标准版本: C++17
+源文件编码: UTF-8
+
+编译方式（在本目录下执行）:
+    g++ -std=c++17 -Wall -Wextra -pedantic -Iinclude -o project_scheduler main.cpp src/model/*.cpp src/controller/*.cpp src/view/*.cpp
+或使用附带的 Makefile:
+    mingw32-make
