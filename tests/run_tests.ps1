@@ -290,6 +290,72 @@ tests\negative_resource_cost.PPM
             "PPM parse error at line",
             "negative"
         )
+    },
+    @{
+        Name = "Dependency removal by task pair import"
+        InputText = @"
+2
+tests\dep_removal_by_pair.PPM
+0
+"@
+        ExpectedTexts = @(
+            "Project imported."
+        )
+    },
+    @{
+        Name = "Export failure with PPM file"
+        InputText = @"
+2
+tests\export_failure.PPM
+0
+"@
+        ExpectedTexts = @(
+            "Project imported."
+        )
+    },
+    @{
+        Name = "Task type conversion PPM"
+        InputText = @"
+2
+tests\task_type_conversion.PPM
+0
+"@
+        ExpectedTexts = @(
+            "Project imported."
+        )
+    },
+    @{
+        Name = "PPM blocks in wrong order error"
+        InputText = @"
+2
+tests\ppm_wrong_order.PPM
+0
+"@
+        ExpectedTexts = @(
+            "PPM parse error"
+        )
+    },
+    @{
+        Name = "Multiple start and end nodes import"
+        InputText = @"
+2
+tests\multi_start_end.PPM
+0
+"@
+        ExpectedTexts = @(
+            "Project imported."
+        )
+    },
+    @{
+        Name = "Negative lag constraint import"
+        InputText = @"
+2
+tests\negative_lag_constraint.PPM
+0
+"@
+        ExpectedTexts = @(
+            "Project imported."
+        )
     }
 )
 

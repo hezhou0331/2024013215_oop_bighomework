@@ -10,6 +10,8 @@
 //Resource 资源类所属头文件
 #include "model/Resource.hpp"
 
+//std::isspace 所属头文件
+#include <cctype>
 //std::find_if、std::remove_if 所属头文件
 #include <algorithm>
 //std::ostream 所属头文件

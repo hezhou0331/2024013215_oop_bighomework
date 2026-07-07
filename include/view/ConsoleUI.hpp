@@ -70,6 +70,8 @@ private:
     void AddDependency() const;
     // 读取索引并删除依赖
     void RemoveDependency() const;
+    // 读取前后置任务索引并删除依赖关系
+    void RemoveDependencyByTaskPair() const;
     // 格式化输出全部依赖列表
     void ListDependencies() const;
     // 读取名称与单位成本并添加资源

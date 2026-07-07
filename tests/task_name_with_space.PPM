@@ -1,0 +1,12 @@
+# Invalid project: task name with space should be rejected
+P SpaceProject
+
+T 1 Task\ Name 5
+T 2 Task2 3
+
+R 101 Resource1 50.0
+
+D 1 2 FS 0
+
+A 1 101 1
+A 2 101 1

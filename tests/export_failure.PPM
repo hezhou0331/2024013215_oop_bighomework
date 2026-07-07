@@ -1,0 +1,9 @@
+# Test project for export error handling
+P ExportFailTest
+
+T 1 Task1 5
+T 2 Task2 3
+
+R 101 Res1 10.0
+
+D 1 2 FS 0

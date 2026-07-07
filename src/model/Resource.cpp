@@ -7,6 +7,8 @@
 //Resource 类所属头文件
 #include "model/Resource.hpp"
 
+//std::isspace 所属头文件
+#include <cctype>
 //std::invalid_argument 所属头文件
 #include <stdexcept>
 
@@ -39,6 +41,13 @@ Resource::Resource(const std::string& Name, double UnitCost)
 {
     if (m_Name.empty()) {                             //资源名称不允许为空
         throw std::invalid_argument("Resource name cannot be empty.");
+    }
+    //检查名称中是否含有空白字符
+    for (char Char : m_Name) {
+        if (std::isspace(static_cast<unsigned char>(Char)) != 0) {
+            throw std::invalid_argument(
+                "Name must not contain whitespace characters.");
+        }
     }
     if (m_rUnitCost < 0.0) {                          //单位成本不允许为负
         throw std::invalid_argument("Resource unit cost cannot be negative.");
@@ -113,6 +122,13 @@ void Resource::SetName(const std::string& Name)
 {
     if (Name.empty()) {                               //资源名称不允许为空
         throw std::invalid_argument("Resource name cannot be empty.");
+    }
+    //检查名称中是否含有空白字符
+    for (char Char : Name) {
+        if (std::isspace(static_cast<unsigned char>(Char)) != 0) {
+            throw std::invalid_argument(
+                "Name must not contain whitespace characters.");
+        }
     }
     m_Name = Name;
 }

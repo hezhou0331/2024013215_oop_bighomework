@@ -1,0 +1,9 @@
+# Test project for task type conversion and resource cleanup
+P TypeConversionTest
+
+T 1 BasicTask 5
+T 2 Task2 3
+
+R 101 Resource1 20.0
+
+D 1 2 FS 0

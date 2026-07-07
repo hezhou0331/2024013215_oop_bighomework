@@ -1,0 +1,13 @@
+# Test project with multiple start and end nodes
+P MultiStartEndTest
+
+T 1 StartA 3
+T 2 StartB 4
+T 3 Middle 2
+T 4 EndC 5
+T 5 EndD 3
+
+D 1 3 FS 0
+D 2 3 FS 0
+D 3 4 FS 0
+D 3 5 FS 0

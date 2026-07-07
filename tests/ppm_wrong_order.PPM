@@ -1,0 +1,7 @@
+# PPM file with blocks in wrong order (D before T) - should handle gracefully
+P WrongOrderTest
+
+D 1 2 FS 0
+
+T 1 Task1 5
+T 2 Task2 3

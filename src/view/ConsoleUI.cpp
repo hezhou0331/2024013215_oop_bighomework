@@ -126,25 +126,28 @@ bool ConsoleUI::HandleChoice(int Choice) const
     case 10 :                                         //列出全部依赖
         ListDependencies();
         break;
-    case 11 :                                         //删除依赖
+    case 11 :                                         //删除依赖（按索引）
         RemoveDependency();
         break;
-    case 12 :                                         //添加资源
+    case 12 :                                         //删除依赖（按任务对）
+        RemoveDependencyByTaskPair();
+        break;
+    case 13 :                                         //添加资源
         AddResource();
         break;
-    case 13 :                                         //列出全部资源
+    case 14 :                                         //列出全部资源
         ListResources();
         break;
-    case 14 :                                         //为任务分配资源
+    case 15 :                                         //为任务分配资源
         AssignResource();
         break;
-    case 15 :                                         //验证项目合理性
+    case 16 :                                         //验证项目合理性
         ValidateProject();
         break;
-    case 16 :                                         //执行关键路径调度计算
+    case 17 :                                         //执行关键路径调度计算
         RunSchedule();
         break;
-    case 17 :                                         //显示统计信息
+    case 18 :                                         //显示统计信息
         ShowStatistics();
         break;
     default :                                         //其余编号一律视为未知命令
@@ -466,6 +469,31 @@ void ConsoleUI::RemoveDependency() const
 }
 
 //-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       ConsoleUI::RemoveDependencyByTaskPair
+//【函数功能】       读取前置与后置任务索引，请求控制器删除该任务对之间的依赖关系。
+//【参数】           无
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void ConsoleUI::RemoveDependencyByTaskPair() const
+{
+    ProjectController& Controller = ProjectController::GetInstance();
+    std::size_t Predecessor = static_cast<std::size_t>(
+        ReadInt("Predecessor task index: "));          //前置任务索引
+    std::size_t Successor = static_cast<std::size_t>(
+        ReadInt("Successor task index: "));            //后置任务索引
+    ProjectController::RES Result
+        = Controller.RemoveDependency(Predecessor, Successor);
+    if (Result == ProjectController::RES::SUCCESS) {
+        std::cout << "Dependency removed.\n";
+    }
+    else {
+        PrintFailure(Result, true);                   //修改类操作，附带失败详情
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ConsoleUI::ListDependencies
 //【函数功能】       向控制器索取全部依赖信息，逐条格式化输出前后置索引、类型与 Lag。
 //【参数】           无
@@ -656,13 +684,14 @@ void ConsoleUI::PrintMenu() const
               << "8. List task relations\n"
               << "9. Add dependency\n"
               << "10. List dependencies\n"
-              << "11. Remove dependency\n"
-              << "12. Add resource\n"
-              << "13. List resources\n"
-              << "14. Assign resource\n"
-              << "15. Validate project\n"
-              << "16. Run CPM schedule\n"
-              << "17. Show statistics\n"
+              << "11. Remove dependency (by index)\n"
+              << "12. Remove dependency (by task pair)\n"
+              << "13. Add resource\n"
+              << "14. List resources\n"
+              << "15. Assign resource\n"
+              << "16. Validate project\n"
+              << "17. Run CPM schedule\n"
+              << "18. Show statistics\n"
               << "0. Exit\n";
 }
 

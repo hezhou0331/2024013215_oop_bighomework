@@ -30,7 +30,13 @@ cd tests
 powershell -ExecutionPolicy Bypass -File run_tests.ps1
 ```
 
-测试覆盖 7 个基础功能场景 + 14 个边界和异常场景，共 **21 个测试用例**。
+测试覆盖 3 个基础功能场景 + 22 个边界和异常场景，共 **25 个测试用例**，包括：
+- 基础功能：项目导入、任务关系、项目导出
+- 依赖管理：按索引删除、按任务对删除（新增）
+- 图合法性：孤立任务、环路、缺失任务、多起点多终点（新增）
+- 数据校验：负 ID、重复 ID、格式错误、非法依赖、非法工期、非法成本等
+- CPM 算法：正负 Lag、里程碑任务、资源分配、任务类型转换（新增）
+- 错误处理：导出失败错误捕获（新增）、文件顺序错误（新增）
 
 ---
 
@@ -43,10 +49,10 @@ powershell -ExecutionPolicy Bypass -File run_tests.ps1
 | 要求 | 功能 | 代码位置 | 测试 |
 |-----|------|--------|------|
 | 2.1.1 | PPM 导入 | `include/model/PPMImporter.hpp`、`src/model/PPMImporter.cpp` | ✓ run_tests.ps1 用例 1-3 |
-| 2.1.2 | PPM 导出 | `include/model/PPMExporter.hpp`、`src/model/PPMExporter.cpp` | ✓ run_tests.ps1 用例 3 |
-| 2.1.3 | 任务管理 | `include/controller/ProjectController.hpp` 菜单 4-7 | ✓ ConsoleUI |
-| 2.1.4 | 依赖管理 | `include/controller/ProjectController.hpp` 菜单 9-11 | ✓ ConsoleUI |
-| 2.1.5 | 资源管理 | `include/controller/ProjectController.hpp` 菜单 12-14 | ✓ ConsoleUI |
+| 2.1.2 | PPM 导出 | `include/model/PPMExporter.hpp`、`src/model/PPMExporter.cpp` | ✓ run_tests.ps1 用例 3；导出错误捕获（新增） |
+| 2.1.3 | 任务管理 | `include/controller/ProjectController.hpp` 菜单 4-8 | ✓ ConsoleUI |
+| 2.1.4 | 依赖管理 | `include/controller/ProjectController.hpp` 菜单 9-12 | ✓ ConsoleUI；支持按索引删除与按任务对删除（新增） |
+| 2.1.5 | 资源管理 | `include/controller/ProjectController.hpp` 菜单 13-15 | ✓ ConsoleUI |
 
 ### 2.2 类设计实现（60%）
 

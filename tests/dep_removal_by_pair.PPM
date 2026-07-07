@@ -1,0 +1,9 @@
+# Test project for dependency removal by task pair
+P RemovalTestProject
+
+T 1 TaskA 3
+T 2 TaskB 4
+T 3 TaskC 2
+
+D 1 2 FS 0
+D 2 3 FS 0

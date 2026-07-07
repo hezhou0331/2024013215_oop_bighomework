@@ -161,13 +161,16 @@ ProjectController::RES ProjectController::ImportProject(
 //【函数名称】       ProjectController::ExportProject
 //【函数功能】       按文件扩展名从工厂选取已注册导出器，把当前项目写入指定文件。
 //【参数】           FileName（输入参数）：导出目标文件路径。
-//【返回值】         RES，SUCCESS 表示导出成功；扩展名未注册或文件不可写返回 FILE_ERROR。
+//【返回值】         RES，SUCCESS 表示导出成功；扩展名未注册或文件不可写返回 FILE_ERROR，
+//                   其他异常返回 UNKNOWN_ERROR；失败详情写入 LastError。
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】       2026-07-07 改为经导出器工厂按扩展名选取导出器。
+//                   2026-07-07 改为非 const 接口，失败时更新 LastError。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::ExportProject(
-    const std::string& FileName) const
+    const std::string& FileName)
 {
+    m_LastError = "";
     try {
         //按扩展名取已注册导出器，完成项目对象到文件的转换
         Exporter<Project>::GetInstanceByFileName(FileName)
@@ -175,11 +178,11 @@ ProjectController::RES ProjectController::ExportProject(
         return RES::SUCCESS;
     }
     catch (const std::invalid_argument& Exception) {    //扩展名未注册或文件不可写
-        (void)Exception;                                //const 接口不改写 LastError
+        m_LastError = Exception.what();
         return RES::FILE_ERROR;
     }
     catch (const std::exception& Exception) {           //其余未预期异常
-        (void)Exception;
+        m_LastError = Exception.what();
         return RES::UNKNOWN_ERROR;
     }
 }
@@ -447,6 +450,34 @@ ProjectController::RES ProjectController::RemoveDependency(std::size_t Index)
     catch (const std::out_of_range& Exception) {        //索引越界
         m_LastError = Exception.what();
         return RES::INDEX_OUT_OF_RANGE;
+    }
+    catch (const std::exception& Exception) {           //其余未预期异常
+        m_LastError = Exception.what();
+        return RES::UNKNOWN_ERROR;
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       ProjectController::RemoveDependency（重载）
+//【函数功能】       按前置任务与后置任务索引删除依赖关系；不存在则返回 INVALID_ARGUMENT。
+//【参数】           Predecessor（输入参数）：前置任务在容器中的索引；
+//                   Successor（输入参数）：后置任务在容器中的索引。
+//【返回值】         RES，SUCCESS 表示删除成功；依赖不存在返回 INVALID_ARGUMENT，
+//                   失败详情写入 LastError。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+ProjectController::RES ProjectController::RemoveDependency(std::size_t Predecessor,
+                                                            std::size_t Successor)
+{
+    m_LastError = "";
+    try {
+        m_Repository.GetCurrentProject().RemoveDependency(Predecessor, Successor);
+        return RES::SUCCESS;
+    }
+    catch (const std::invalid_argument& Exception) {    //依赖不存在
+        m_LastError = Exception.what();
+        return RES::INVALID_ARGUMENT;
     }
     catch (const std::exception& Exception) {           //其余未预期异常
         m_LastError = Exception.what();

@@ -212,8 +212,8 @@ public:
     RES CreateProject(const std::string& Name);
     // 按扩展名选择已注册导入器，把文件导入为当前项目
     RES ImportProject(const std::string& FileName);
-    // 按扩展名选择已注册导出器，把当前项目写入文件
-    RES ExportProject(const std::string& FileName) const;
+    // 按扩展名选择已注册导出器，把当前项目写入文件；失败时更新 LastError
+    RES ExportProject(const std::string& FileName);
 
     //-----------------------------------------------------------------------------------------------------------
     //任务操作
@@ -242,6 +242,8 @@ public:
                       int LagDays);
     // 删除指定索引的依赖
     RES RemoveDependency(std::size_t Index);
+    // 删除指定前置与后置任务的依赖关系
+    RES RemoveDependency(std::size_t Predecessor, std::size_t Successor);
     // 收集全部依赖的展示信息（输出参数 InfoList）
     RES GetDependencyList(DependencyInfoList& InfoList) const;
 

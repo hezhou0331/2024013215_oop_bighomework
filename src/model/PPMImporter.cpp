@@ -210,6 +210,10 @@ void PPMImporter::ParseProjectLine(std::istringstream& LineStream,
     if (!(LineStream >> Name)) {                      //名称字段缺失
         throw std::invalid_argument("Project name missing.");
     }
+    std::string ExtraField;
+    if (LineStream >> ExtraField) {                   //检查是否有多余字段
+        throw std::invalid_argument("Unexpected extra field in project line.");
+    }
     TargetProject.SetName(Name);
 }
 
@@ -248,6 +252,10 @@ void PPMImporter::ParseTaskLine(const std::string& Kind,
     else if ((LineStream >> Duration) && (Duration != 0)) {
         //里程碑行若写了工期，则必须为 0
         throw std::invalid_argument("Milestone duration must be 0.");
+    }
+    std::string ExtraField;
+    if (LineStream >> ExtraField) {                   //检查是否有多余字段
+        throw std::invalid_argument("Unexpected extra field in task line.");
     }
     if (TaskIdToIndex.count(TaskID) != 0) {           //任务 ID 不允许重复
         throw std::invalid_argument("Duplicate task ID.");
@@ -288,6 +296,10 @@ void PPMImporter::ParseResourceLine(
     if (ResourceID < 0) {                             //资源 ID 必须为非负整数
         throw std::invalid_argument("Resource ID must be non-negative.");
     }
+    std::string ExtraField;
+    if (LineStream >> ExtraField) {                   //检查是否有多余字段
+        throw std::invalid_argument("Unexpected extra field in resource line.");
+    }
     if (ResourceIdToIndex.count(ResourceID) != 0) {   //资源 ID 不允许重复
         throw std::invalid_argument("Duplicate resource ID.");
     }
@@ -321,6 +333,10 @@ void PPMImporter::ParseDependencyLine(
     }
     if ((PredecessorID < 0) || (SuccessorID < 0)) {   //任务 ID 必须为非负整数
         throw std::invalid_argument("Dependency task ID must be non-negative.");
+    }
+    std::string ExtraField;
+    if (LineStream >> ExtraField) {                   //检查是否有多余字段
+        throw std::invalid_argument("Unexpected extra field in dependency line.");
     }
     if ((TaskIdToIndex.count(PredecessorID) == 0)
         || (TaskIdToIndex.count(SuccessorID) == 0)) {
@@ -364,6 +380,10 @@ void PPMImporter::ParseAllocationLine(
     }
     if (Quantity <= 0) {                              //占用数量必须为正整数
         throw std::invalid_argument("Quantity must be positive.");
+    }
+    std::string ExtraField;
+    if (LineStream >> ExtraField) {                   //检查是否有多余字段
+        throw std::invalid_argument("Unexpected extra field in allocation line.");
     }
     if ((TaskIdToIndex.count(TaskID) == 0)
         || (ResourceIdToIndex.count(ResourceID) == 0)) {
