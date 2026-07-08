@@ -2,19 +2,13 @@
 //【文件名】                 FilePorter.hpp
 //【功能模块和目的】         声明并实现文件读写接口基类模板，提供扩展名校验、文件可打开性
 //                           检测等与具体模型类型无关的通用工具，供导入器/导出器模板继承。
-//【开发者及日期】           2024013215, 2026-07-07
-//【更改记录】
+//【开发者及日期】           刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 #ifndef FILE_PORTER_HPP
 #define FILE_PORTER_HPP
-
-//std::invalid_argument 异常基类所属头文件
 #include <stdexcept>
-//std::string 所属头文件
 #include <string>
-//std::ifstream/std::ofstream 所属头文件
 #include <fstream>
-//std::toupper 所属头文件
 #include <cctype>
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -22,8 +16,7 @@
 //【功能】             标记文件接口的传输方向：IMPORTER 表示导入器，EXPORTER 表示导出器；
 //                     作为 FilePorter 的非类型模板参数使用。
 //【接口说明】         枚举量 IMPORTER、EXPORTER。
-//【开发者及日期】     2024013215, 2026-07-07
-//【更改记录】
+//【开发者及日期】     刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 enum class FilePorterType {
     IMPORTER,    //导入方向：从文件读入模型
@@ -39,8 +32,7 @@ enum class FilePorterType {
 //                     静态 GetExtName 截取文件名中的扩展名；静态 ToUpperCopy 返回大写
 //                     副本；内嵌异常类 INVALID_FILE_TYPE、FILE_OPEN_FAIL 用于报告错误；
 //                     构造函数受保护，仅允许派生类实例化，禁止拷贝与赋值。
-//【开发者及日期】     2024013215, 2026-07-07
-//【更改记录】
+//【开发者及日期】     刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 class FilePorter {
@@ -49,7 +41,7 @@ public:
     //内嵌异常类
     //-----------------------------------------------------------------------------------------------------------
     //【类名】INVALID_FILE_TYPE【功能】报告非法文件扩展名的异常【接口说明】以扩展名构造，
-    //what() 返回错误描述【开发者及日期】2024013215, 2026-07-07
+    //what() 返回错误描述【开发者及日期】刘江宇, 2026-07-07
     class INVALID_FILE_TYPE : public std::invalid_argument {
     public:
         // 扩展名是必要信息，不应存在默认构造函数
@@ -65,7 +57,7 @@ public:
     };
 
     //【类名】FILE_OPEN_FAIL【功能】报告文件打开失败的异常【接口说明】以文件名构造，
-    //what() 返回错误描述【开发者及日期】2024013215, 2026-07-07
+    //what() 返回错误描述【开发者及日期】刘江宇, 2026-07-07
     class FILE_OPEN_FAIL : public std::invalid_argument {
     public:
         // 文件名是必要信息，不应存在默认构造函数
@@ -115,9 +107,8 @@ protected:
 //【函数名称】       FilePorter::INVALID_FILE_TYPE::INVALID_FILE_TYPE
 //【函数功能】       以非法扩展名构造异常对象，生成含扩展名的错误描述文本。
 //【参数】           FileExtName（输入参数）：非法的文件扩展名。
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 FilePorter<DIRECTION>::INVALID_FILE_TYPE::INVALID_FILE_TYPE(
@@ -145,9 +136,8 @@ FilePorter<DIRECTION>::INVALID_FILE_TYPE::~INVALID_FILE_TYPE() = default;
 //【函数名称】       FilePorter::FILE_OPEN_FAIL::FILE_OPEN_FAIL
 //【函数功能】       以打开失败的文件名构造异常对象，生成含文件名的错误描述文本。
 //【参数】           FileName（输入参数）：打开失败的文件路径。
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 FilePorter<DIRECTION>::FILE_OPEN_FAIL::FILE_OPEN_FAIL(
@@ -174,9 +164,8 @@ FilePorter<DIRECTION>::FILE_OPEN_FAIL::~FILE_OPEN_FAIL() = default;
 //【函数名称】       FilePorter::FilePorter
 //【函数功能】       默认构造文件接口基类；基类无内部状态，无需额外初始化。
 //【参数】           无
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 FilePorter<DIRECTION>::FilePorter() = default;
@@ -185,9 +174,8 @@ FilePorter<DIRECTION>::FilePorter() = default;
 //【函数名称】       FilePorter::~FilePorter
 //【函数功能】       析构文件接口基类；基类不持有资源，无需额外清理。
 //【参数】           无
-//【返回值】         析构函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 FilePorter<DIRECTION>::~FilePorter() = default;
@@ -198,9 +186,8 @@ FilePorter<DIRECTION>::~FilePorter() = default;
 //                   INVALID_FILE_TYPE 异常。
 //【参数】           FileName（输入参数）：待校验的文件路径；
 //                   FileExtName（输入参数）：期望的文件扩展名（不含 '.'）。
-//【返回值】         void，无返回值；校验失败以异常报告。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。；校验失败以异常报告。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 void FilePorter<DIRECTION>::FileTypeTest(const std::string& FileName,
@@ -218,9 +205,8 @@ void FilePorter<DIRECTION>::FileTypeTest(const std::string& FileName,
 //                   方向以追加模式测试文件是否可写（不破坏已有内容）；失败抛出
 //                   FILE_OPEN_FAIL 异常。
 //【参数】           FileName（输入参数）：待测试的文件路径。
-//【返回值】         void，无返回值；打开失败以异常报告。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。；打开失败以异常报告。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 void FilePorter<DIRECTION>::FileOpenTest(const std::string& FileName)
@@ -246,8 +232,7 @@ void FilePorter<DIRECTION>::FileOpenTest(const std::string& FileName)
 //【函数功能】       截取文件名中最后一个 '.' 之后的部分作为扩展名。
 //【参数】           FileName（输入参数）：文件路径。
 //【返回值】         std::string，文件扩展名；无扩展名或 '.' 位于首位时返回空字符串。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 std::string FilePorter<DIRECTION>::GetExtName(const std::string& FileName)
@@ -265,8 +250,7 @@ std::string FilePorter<DIRECTION>::GetExtName(const std::string& FileName)
 //【函数功能】       生成给定字符串的大写副本，用于扩展名的不区分大小写比较。
 //【参数】           Text（输入参数）：原始字符串。
 //【返回值】         std::string，全部字母转为大写后的副本。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 template<FilePorterType DIRECTION>
 std::string FilePorter<DIRECTION>::ToUpperCopy(const std::string& Text)

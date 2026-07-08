@@ -4,26 +4,17 @@
 //                           接收界面命令，调用模型层完成
 //                           项目、任务、依赖与资源的管理及校验调度
 //                           以状态枚举与信息类回传结果，不做任何文本格式化
-//【开发者及日期】           2024013215, 2026-07-05
-//【更改记录】               2026-07-07 重构为状态枚举+信息类接口
+//【开发者及日期】           刘江宇, 2026-07-05
+//【修改记录】               2026-07-07 重构为状态枚举+信息类接口
 //                           文本格式化移交界面层
 //-------------------------------------------------------------------------------------------------------------------
 #include "controller/ProjectController.hpp"
-
-//CPMScheduler 调度器类所属头文件
 #include "model/CPMScheduler.hpp"
-//Exporter 基类模板所属头文件
 #include "model/Exporter.hpp"
-//Importer 基类模板所属头文件
 #include "model/Importer.hpp"
-//PPMExporter 具体导出器所属头文件
 #include "model/PPMExporter.hpp"
-//PPMImporter 具体导入器所属头文件
 #include "model/PPMImporter.hpp"
-//ProjectValidator 校验器类所属头文件
 #include "model/ProjectValidator.hpp"
-
-//std 异常类型所属头文件
 #include <stdexcept>
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -32,8 +23,7 @@
 //                   首次调用时构造函数内静态对象，之后始终返回同一对象
 //【参数】           无
 //【返回值】         ProjectController&，控制器单例的引用
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController& ProjectController::GetInstance()
 {
@@ -48,9 +38,9 @@ ProjectController& ProjectController::GetInstance()
 //                   向导入/导出器工厂注册PPM格式的具体实现
 //                   后续如需支持更多格式，仅需在此追加注册
 //【参数】           无
-//【返回值】         构造函数无返回值
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 增加PPM导入/导出器的工厂注册
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 增加PPM导入/导出器的工厂注册
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ProjectController()
     : m_Repository(), m_LastError("")
@@ -64,9 +54,8 @@ ProjectController::ProjectController()
 //【函数功能】       析构控制器对象
 //                   成员仓库由其自身析构函数清理，无需额外处理
 //【参数】           无
-//【返回值】         析构函数无返回值
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::~ProjectController() = default;
 
@@ -76,8 +65,7 @@ ProjectController::~ProjectController() = default;
 //                   供界面层输出给用户
 //【参数】           无
 //【返回值】         const std::string&，最近一次失败操作的详细错误信息。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 const std::string& ProjectController::GetLastError() const
 {
@@ -90,8 +78,8 @@ const std::string& ProjectController::GetLastError() const
 //【参数】           Name（输入参数）：新项目的名称。
 //【返回值】         RES，SUCCESS 表示创建成功；名称非法返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为返回状态枚举。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::CreateProject(
     const std::string& Name)
@@ -117,8 +105,8 @@ ProjectController::RES ProjectController::CreateProject(
 //                   未注册或文件不可读返回 FILE_ERROR，内容格式非法返回 PARSE_ERROR。
 //【参数】           FileName（输入参数）：待导入的项目模型文件路径。
 //【返回值】         RES，SUCCESS 表示导入成功；失败详情（含解析错误行号）写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为经导入器工厂按扩展名选取导入器。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为经导入器工厂按扩展名选取导入器。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::ImportProject(
     const std::string& FileName)
@@ -151,8 +139,8 @@ ProjectController::RES ProjectController::ImportProject(
 //【参数】           FileName（输入参数）：导出目标文件路径。
 //【返回值】         RES，SUCCESS 表示导出成功；扩展名未注册或文件不可写返回 FILE_ERROR，
 //                   其他异常返回 UNKNOWN_ERROR；失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为经导出器工厂按扩展名选取导出器。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为经导出器工厂按扩展名选取导出器。
 //                   2026-07-07 改为非 const 接口，失败时更新 LastError。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::ExportProject(
@@ -182,8 +170,8 @@ ProjectController::RES ProjectController::ExportProject(
 //                   Duration（输入参数）：任务工期（天），0 表示里程碑。
 //【返回值】         RES，SUCCESS 表示添加成功；名称重复或工期非法返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为返回状态枚举。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::AddTask(const std::string& Name,
                                                   int Duration)
@@ -217,8 +205,8 @@ ProjectController::RES ProjectController::AddTask(const std::string& Name,
 //                   Duration（输入参数）：任务的新工期（天）。
 //【返回值】         RES，SUCCESS 表示修改成功；索引越界返回 INDEX_OUT_OF_RANGE，
 //                   参数非法返回 INVALID_ARGUMENT，失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为返回状态枚举。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::UpdateTask(std::size_t Index,
                                                      const std::string& Name,
@@ -249,8 +237,8 @@ ProjectController::RES ProjectController::UpdateTask(std::size_t Index,
 //【参数】           Index（输入参数）：待删除任务的索引。
 //【返回值】         RES，SUCCESS 表示删除成功；索引越界返回 INDEX_OUT_OF_RANGE，
 //                   失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为返回状态枚举。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::RemoveTask(std::size_t Index)
 {
@@ -276,8 +264,7 @@ ProjectController::RES ProjectController::RemoveTask(std::size_t Index)
 //【参数】           SourceProject（输入参数）：被查询的项目；
 //                   Index（输入参数）：目标任务的索引。
 //【返回值】         TaskInfo，采集到的任务展示信息。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::TaskInfo ProjectController::BuildTaskInfo(
     const Project& SourceProject, std::size_t Index) const
@@ -304,8 +291,8 @@ ProjectController::TaskInfo ProjectController::BuildTaskInfo(
 //【函数功能】       采集当前项目全部任务的展示信息，按容器索引顺序填入输出列表。
 //【参数】           InfoList（输出参数）：填充任务展示信息的列表，原有内容被清空。
 //【返回值】         RES，恒为 SUCCESS。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为回传信息类列表。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为回传信息类列表。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::GetTaskList(
     TaskInfoList& InfoList) const
@@ -328,8 +315,8 @@ ProjectController::RES ProjectController::GetTaskList(
 //                   Predecessors（输出参数）：前驱任务信息列表，原有内容被清空；
 //                   Successors（输出参数）：后继任务信息列表，原有内容被清空。
 //【返回值】         RES，SUCCESS 表示查询成功；索引越界返回 INDEX_OUT_OF_RANGE。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为回传信息类列表。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为回传信息类列表。
 //                   2026-07-07 增加被查询任务自身信息的输出参数。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::GetTaskRelations(
@@ -377,8 +364,8 @@ ProjectController::RES ProjectController::GetTaskRelations(
 //【返回值】         RES，SUCCESS 表示添加成功；自依赖返回 SELF_DEPENDENCY，成环返回
 //                   CYCLE_DETECTED，重复依赖或类型非法返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为返回状态枚举。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::AddDependency(
     std::size_t Predecessor,
@@ -430,8 +417,8 @@ ProjectController::RES ProjectController::AddDependency(
 //【参数】           Index（输入参数）：待删除依赖的索引。
 //【返回值】         RES，SUCCESS 表示删除成功；索引越界返回 INDEX_OUT_OF_RANGE，
 //                   失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为返回状态枚举。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::RemoveDependency(std::size_t Index)
 {
@@ -457,8 +444,7 @@ ProjectController::RES ProjectController::RemoveDependency(std::size_t Index)
 //                   Successor（输入参数）：后置任务在容器中的索引。
 //【返回值】         RES，SUCCESS 表示删除成功；依赖不存在返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::RemoveDependency(std::size_t Predecessor,
                                                             std::size_t Successor)
@@ -487,8 +473,8 @@ ProjectController::RES ProjectController::RemoveDependency(std::size_t Predecess
 //【函数功能】       采集当前项目全部依赖的展示信息，按容器索引顺序填入输出列表。
 //【参数】           InfoList（输出参数）：填充依赖展示信息的列表，原有内容被清空。
 //【返回值】         RES，恒为 SUCCESS。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为回传信息类列表。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为回传信息类列表。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::GetDependencyList(
     DependencyInfoList& InfoList) const
@@ -517,8 +503,8 @@ ProjectController::RES ProjectController::GetDependencyList(
 //                   UnitCost（输入参数）：资源的单位时间成本。
 //【返回值】         RES，SUCCESS 表示添加成功；名称重复或成本非法返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为返回状态枚举。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::AddResource(const std::string& Name,
                                                       double UnitCost)
@@ -547,8 +533,8 @@ ProjectController::RES ProjectController::AddResource(const std::string& Name,
 //                   Quantity（输入参数）：分配数量（正整数）。
 //【返回值】         RES，SUCCESS 表示分配成功；索引越界返回 INDEX_OUT_OF_RANGE，
 //                   里程碑占用资源或数量非法返回 INVALID_ARGUMENT，失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为返回状态枚举。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::AssignResource(
     std::size_t TaskIndex,
@@ -585,8 +571,8 @@ ProjectController::RES ProjectController::AssignResource(
 //【函数功能】       采集当前项目全部资源的展示信息，按容器索引顺序填入输出列表。
 //【参数】           InfoList（输出参数）：填充资源展示信息的列表，原有内容被清空。
 //【返回值】         RES，恒为 SUCCESS。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为回传信息类列表。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为回传信息类列表。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::GetResourceList(
     ResourceInfoList& InfoList) const
@@ -611,8 +597,8 @@ ProjectController::RES ProjectController::GetResourceList(
 //                   依赖引用有效），结论与逐条错误信息写入输出参数。
 //【参数】           Info（输出参数）：填充校验结论与错误信息。
 //【返回值】         RES，恒为 SUCCESS（校验结论在 Info.IsValid() 中）。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为回传信息类。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为回传信息类。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::ValidateProject(
     ValidationInfo& Info) const
@@ -632,8 +618,8 @@ ProjectController::RES ProjectController::ValidateProject(
 //【参数】           Info（输出参数）：填充项目总工期与关键路径任务索引。
 //【返回值】         RES，SUCCESS 表示计算完成；项目不合理返回 INVALID_PROJECT，
 //                   失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为回传信息类。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为回传信息类。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::RunSchedule(ScheduleInfo& Info)
 {
@@ -663,8 +649,8 @@ ProjectController::RES ProjectController::RunSchedule(ScheduleInfo& Info)
 //【参数】           Info（输出参数）：填充统计信息与调度结论。
 //【返回值】         RES，SUCCESS 表示统计完成；项目不合理无法调度时返回 INVALID_PROJECT
 //                   （此时计数与成本字段仍然有效），失败详情写入 LastError。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 改为回传信息类，并更名以明确该操作会触发调度计算。
+//【开发者及日期】   刘江宇, 2026-07-05
+//【修改记录】       2026-07-07 改为回传信息类，并更名以明确该操作会触发调度计算。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::CollectStatistics(
     StatisticsInfo& Info)
@@ -689,9 +675,8 @@ ProjectController::RES ProjectController::CollectStatistics(
 //【函数名称】       ProjectController::TaskInfo::TaskInfo
 //【函数功能】       默认构造任务信息载体，数值成员清零。
 //【参数】           无
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::TaskInfo::TaskInfo()
     : m_uIndex(0), m_Name(""), m_iDuration(0), m_bIsMilestone(false),
@@ -841,9 +826,8 @@ void ProjectController::TaskInfo::SetSuccessors(
 //【函数名称】       ProjectController::DependencyInfo::DependencyInfo
 //【函数功能】       默认构造依赖信息载体，数值成员清零。
 //【参数】           无
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::DependencyInfo::DependencyInfo()
     : m_uPredecessor(0), m_uSuccessor(0), m_TypeText(""), m_iLagDays(0)
@@ -908,9 +892,8 @@ void ProjectController::DependencyInfo::SetLagDays(int LagDays)
 //【函数名称】       ProjectController::ResourceInfo::ResourceInfo
 //【函数功能】       默认构造资源信息载体，数值成员清零。
 //【参数】           无
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ResourceInfo::ResourceInfo()
     : m_Name(""), m_rUnitCost(0.0)
@@ -954,9 +937,8 @@ void ProjectController::ResourceInfo::SetUnitCost(double UnitCost)
 //【函数名称】       ProjectController::ValidationInfo::ValidationInfo
 //【函数功能】       默认构造校验结论载体，结论初始化为不合法。
 //【参数】           无
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ValidationInfo::ValidationInfo()
     : m_bIsValid(false), m_Messages()
@@ -1002,9 +984,8 @@ void ProjectController::ValidationInfo::SetMessages(
 //【函数名称】       ProjectController::ScheduleInfo::ScheduleInfo
 //【函数功能】       默认构造调度结论载体，总工期清零。
 //【参数】           无
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ScheduleInfo::ScheduleInfo()
     : m_iProjectDuration(0), m_CriticalPath()
@@ -1050,9 +1031,8 @@ void ProjectController::ScheduleInfo::SetCriticalPath(
 //【函数名称】       ProjectController::StatisticsInfo::StatisticsInfo
 //【函数功能】       默认构造统计信息载体，数值成员清零。
 //【参数】           无
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-07
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-07
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::StatisticsInfo::StatisticsInfo()
     : m_ProjectName(""), m_uTaskCount(0), m_uDependencyCount(0),

@@ -2,25 +2,19 @@
 //【文件名】                 ProjectValidator.cpp
 //【功能模块和目的】         实现项目校验器类，基于图算法检查依赖图无环、无孤立任务、起止任务
 //                           存在及全部任务可达等调度前提。
-//【开发者及日期】           2024013215, 2026-07-05
-//【更改记录】               2026-07-05 按课程 C++ 编码规范 V1.3 修订注释与标识符命名。
+//【开发者及日期】           刘江宇, 2026-07-05
+//【修改记录】               2026-07-05 按课程 C++ 编码规范 V1.3 修订注释与标识符命名。
 //-------------------------------------------------------------------------------------------------------------------
-//ProjectValidator 类所属头文件
 #include "model/ProjectValidator.hpp"
-
-//Project 模型类所属头文件
 #include "model/Project.hpp"
-
-//std::queue 所属头文件
 #include <queue>
 
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectValidator::ProjectValidator
 //【函数功能】       默认构造项目校验器；校验器无内部状态，无需额外初始化。
 //【参数】           无
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 ProjectValidator::ProjectValidator() = default;
 
@@ -28,9 +22,8 @@ ProjectValidator::ProjectValidator() = default;
 //【函数名称】       ProjectValidator::ProjectValidator
 //【函数功能】       拷贝构造项目校验器；校验器无内部状态，直接采用默认行为。
 //【参数】           Source（输入参数）：作为拷贝来源的校验器对象。
-//【返回值】         构造函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 ProjectValidator::ProjectValidator(const ProjectValidator& Source) = default;
 
@@ -39,8 +32,7 @@ ProjectValidator::ProjectValidator(const ProjectValidator& Source) = default;
 //【函数功能】       拷贝赋值项目校验器；校验器无内部状态，直接采用默认行为。
 //【参数】           Source（输入参数）：作为赋值来源的校验器对象。
 //【返回值】         ProjectValidator&，返回自身引用以支持连续赋值。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 ProjectValidator& ProjectValidator::operator=(
     const ProjectValidator& Source) = default;
@@ -49,9 +41,8 @@ ProjectValidator& ProjectValidator::operator=(
 //【函数名称】       ProjectValidator::~ProjectValidator
 //【函数功能】       析构项目校验器；校验器不持有资源，无需额外清理。
 //【参数】           无
-//【返回值】         析构函数无返回值。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【返回值】         无。
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 ProjectValidator::~ProjectValidator() = default;
 
@@ -61,8 +52,7 @@ ProjectValidator::~ProjectValidator() = default;
 //                   存在起始与结束任务、所有任务均在起止路径上，逐项累积错误信息。
 //【参数】           SourceProject（输入参数）：待校验的项目模型。
 //【返回值】         ValidationResult，包含全部错误信息的校验结果，无错误即校验通过。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 ValidationResult ProjectValidator::Validate(const Project& SourceProject) const
 {
@@ -146,8 +136,7 @@ ValidationResult ProjectValidator::Validate(const Project& SourceProject) const
 //【函数功能】       判断项目依赖图是否为有向无环图：拓扑序包含全部任务即无环。
 //【参数】           SourceProject（输入参数）：待判断的项目模型。
 //【返回值】         bool，依赖图无环返回 true，存在环路返回 false。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 bool ProjectValidator::IsDag(const Project& SourceProject) const
 {
@@ -163,8 +152,7 @@ bool ProjectValidator::IsDag(const Project& SourceProject) const
 //【参数】           SourceProject（输入参数）：待求拓扑序的项目模型。
 //【返回值】         std::vector<std::size_t>，按拓扑序排列的任务索引序列；依赖图有环时
 //                   序列长度小于任务总数。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 std::vector<std::size_t> ProjectValidator::GetTopologicalOrder(
     const Project& SourceProject) const
@@ -206,8 +194,7 @@ std::vector<std::size_t> ProjectValidator::GetTopologicalOrder(
 //                   两个集合即不满足。
 //【参数】           SourceProject（输入参数）：待检查的项目模型。
 //【返回值】         bool，所有任务都位于某条起止路径上返回 true，否则返回 false。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 bool ProjectValidator::HasReachableNodes(const Project& SourceProject) const
 {
@@ -281,8 +268,7 @@ bool ProjectValidator::HasReachableNodes(const Project& SourceProject) const
 //【参数】           SourceProject（输入参数）：提供任务数与依赖列表的项目模型。
 //【返回值】         std::vector<std::vector<std::size_t>>，邻接表，第 i 项为任务 i 的
 //                   直接后继任务索引集合。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 std::vector<std::vector<std::size_t>> ProjectValidator::BuildAdjacency(
     const Project& SourceProject) const
@@ -308,8 +294,7 @@ std::vector<std::vector<std::size_t>> ProjectValidator::BuildAdjacency(
 //【参数】           SourceProject（输入参数）：提供任务数与依赖列表的项目模型。
 //【返回值】         std::vector<std::vector<std::size_t>>，逆邻接表，第 i 项为任务 i 的
 //                   直接前驱任务索引集合。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 std::vector<std::vector<std::size_t>> ProjectValidator::BuildReverseAdjacency(
     const Project& SourceProject) const
@@ -333,8 +318,7 @@ std::vector<std::vector<std::size_t>> ProjectValidator::BuildReverseAdjacency(
 //【函数功能】       按依赖列表统计每个任务的入度：每条有效依赖使其后置任务入度加一。
 //【参数】           SourceProject（输入参数）：提供任务数与依赖列表的项目模型。
 //【返回值】         std::vector<int>，入度表，第 i 项为任务 i 的直接前驱个数。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
+//【开发者及日期】   刘江宇, 2026-07-05
 //-------------------------------------------------------------------------------------------------------------------
 std::vector<int> ProjectValidator::BuildIndegrees(
     const Project& SourceProject) const

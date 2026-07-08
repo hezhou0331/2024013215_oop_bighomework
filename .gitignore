@@ -14,3 +14,13 @@ Release/
 
 *.log
 tmp/
+
+# Temporary review/submission notes generated during local polishing
+FINAL_*.md
+*_SUMMARY.txt
+SPRINT_ASSESSMENT.md
+DEDUCTION_CHECKLIST.md
+IMPROVEMENTS_APPLIED.md
+SUBMISSION_READY.md
+test_single.ps1
+fix_line_length.py
