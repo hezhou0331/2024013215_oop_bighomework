@@ -1,7 +1,7 @@
 开发环境说明
-操作系统版本: Microsoft Windows 11 家庭中文版 10.0.26200 - 64bit
+操作系统版本: Microsoft Windows 11 家庭版 10.0.26200.0 - 64 位
 编辑器版本: Visual Studio Code 1.127.0
-编译器版本: gcc version 15.1.0 (x86_64, MinGW-W64)
+编译器版本: g++ 15.1.0 (x86_64, MinGW-W64)
 C++标准版本: C++17
 源文件编码: UTF-8
 
