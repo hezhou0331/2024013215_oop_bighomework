@@ -1,12 +1,15 @@
 //-------------------------------------------------------------------------------------------------------------------
 //【文件名】                 ProjectController.hpp
-//【功能模块和目的】         声明 MVC 控制器单例类：向界面层提供项目管理全部业务接口，
-//                           以状态枚举报告结果、以信息类传递数据，不做任何文本格式化。
+//【功能模块和目的】         声明MVC控制器单例类
+//                           向界面层提供项目管理全部业务接口
+//                           以状态枚举报告结果、以信息类传递数据
+//                           不做任何文本格式化
 //【开发者及日期】           2024013215, 2026-07-05
-//【更改记录】               2026-07-07 重构为"状态枚举 + 信息类"接口，文本格式化移交界面层。
+//【更改记录】               2026-07-07 重构为状态枚举+信息类接口
+//                           文本格式化移交界面层
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_PROJECT_CONTROLLER_HPP
-#define PROJECT_SCHEDULER_PROJECT_CONTROLLER_HPP
+#ifndef PROJECT_CONTROLLER_HPP
+#define PROJECT_CONTROLLER_HPP
 
 //ProjectRepository 项目仓库类所属头文件
 #include "model/ProjectRepository.hpp"
@@ -20,25 +23,26 @@
 
 //-------------------------------------------------------------------------------------------------------------------
 //【类名】             ProjectController
-//【功能】             项目调度器的业务流程/控制器类（MVC 中的 C），单例模式：接收界面层
-//                     命令，调用模型层完成项目、任务、依赖、资源的管理与校验调度，以
-//                     状态枚举 RES 报告执行结果，以嵌套信息类回传数据；不含任何输入
-//                     输出与文本格式化，格式化由界面层完成。
-//【接口说明】         静态 GetInstance 获取唯一实例；CreateProject/ImportProject/
-//                     ExportProject 管理项目整体；AddTask/UpdateTask/RemoveTask/
-//                     GetTaskList/GetTaskRelations 管理任务；AddDependency/
-//                     RemoveDependency/GetDependencyList 管理依赖；AddResource/
-//                     AssignResource/GetResourceList 管理资源；ValidateProject 校验、
-//                     RunSchedule 执行 CPM 计算、CollectStatistics 汇总统计；静态
-//                     ResultToText 把状态枚举翻译为描述文本；LastError 为最近一次修改类
-//                     操作的失败详情（只读常引用，const 查询接口不改写它）。
+//【功能】             项目调度器的业务流程/控制器类（MVC中的C）
+//                     单例模式：接收界面层命令
+//                     调用模型层完成项目、任务、依赖、资源的管理与校验调度
+//                     以状态枚举RES报告执行结果，以嵌套信息类回传数据
+//                     不含任何输入输出与文本格式化，格式化由界面层完成
+//【接口说明】         静态GetInstance获取唯一实例
+//                     Create/Import/ExportProject管理项目整体
+//                     Add/Update/RemoveTask/GetTaskList/GetTaskRelations管理任务
+//                     Add/RemoveDependency/GetDependencyList管理依赖
+//                     AddResource/AssignResource/GetResourceList管理资源
+//                     ValidateProject校验/RunSchedule执行CPM计算/CollectStatistics统计
+//                     GetLastError返回最近一次失败详情（只读引用）
 //【开发者及日期】     2024013215, 2026-07-05
-//【更改记录】         2026-07-07 重构为"状态枚举 + 信息类"接口，文本格式化移交界面层。
+//【更改记录】         2026-07-07 重构为状态枚举+信息类接口
+//                     文本格式化移交界面层
 //-------------------------------------------------------------------------------------------------------------------
 class ProjectController {
 public:
     //-----------------------------------------------------------------------------------------------------------
-    //与界面层交换数据的枚举与嵌套信息类（纯数据载体，成员无读写规则，故为公有）
+    //与界面层交换数据的枚举与嵌套信息类（数据成员私有，通过读写接口访问）
     //-----------------------------------------------------------------------------------------------------------
 
     //【类名】RES（enum class）【功能】控制器全部公开业务接口的返回状态
@@ -70,18 +74,45 @@ public:
         // 析构函数：无额外资源需要释放
         ~TaskInfo();
 
-        std::size_t Index;                        //任务在容器中的索引
-        std::string Name;                         //任务名称
-        int Duration;                             //工期（天），里程碑为 0
-        bool IsMilestone;                         //是否为里程碑任务
-        double TotalCost;                         //任务占用资源的总成本
-        int EarlyStart;                           //最早开始时间 ES
-        int EarlyFinish;                          //最早完成时间 EF
-        int LateStart;                            //最晚开始时间 LS
-        int LateFinish;                           //最晚完成时间 LF
-        int SlackDays;                            //松弛（可推迟）天数
-        std::vector<std::size_t> Predecessors;    //全部前驱任务索引
-        std::vector<std::size_t> Successors;      //全部后继任务索引
+        std::size_t GetIndex() const;
+        const std::string& GetName() const;
+        int GetDuration() const;
+        bool IsMilestoneTask() const;
+        double GetTotalCost() const;
+        int GetEarlyStart() const;
+        int GetEarlyFinish() const;
+        int GetLateStart() const;
+        int GetLateFinish() const;
+        int GetSlackDays() const;
+        const std::vector<std::size_t>& GetPredecessors() const;
+        const std::vector<std::size_t>& GetSuccessors() const;
+
+        void SetIndex(std::size_t Index);
+        void SetName(const std::string& Name);
+        void SetDuration(int Duration);
+        void SetMilestone(bool IsMilestoneValue);
+        void SetTotalCost(double TotalCost);
+        void SetEarlyStart(int EarlyStart);
+        void SetEarlyFinish(int EarlyFinish);
+        void SetLateStart(int LateStart);
+        void SetLateFinish(int LateFinish);
+        void SetSlackDays(int SlackDays);
+        void SetPredecessors(const std::vector<std::size_t>& Predecessors);
+        void SetSuccessors(const std::vector<std::size_t>& Successors);
+
+    private:
+        std::size_t m_uIndex;                        //任务在容器中的索引
+        std::string m_Name;                          //任务名称
+        int m_iDuration;                             //工期（天），里程碑为 0
+        bool m_bIsMilestone;                         //是否为里程碑任务
+        double m_rTotalCost;                         //任务占用资源的总成本
+        int m_iEarlyStart;                           //最早开始时间 ES
+        int m_iEarlyFinish;                          //最早完成时间 EF
+        int m_iLateStart;                            //最晚开始时间 LS
+        int m_iLateFinish;                           //最晚完成时间 LF
+        int m_iSlackDays;                            //松弛（可推迟）天数
+        std::vector<std::size_t> m_Predecessors;      //全部前驱任务索引
+        std::vector<std::size_t> m_Successors;        //全部后继任务索引
     };
 
     //【类名】DependencyInfo【功能】单条依赖的展示信息（纯数据载体）
@@ -98,10 +129,21 @@ public:
         // 析构函数：无额外资源需要释放
         ~DependencyInfo();
 
-        std::size_t Predecessor;                  //前置任务索引
-        std::size_t Successor;                    //后置任务索引
-        std::string TypeText;                     //依赖类型文本（FS/SS/FF/SF）
-        int LagDays;                              //滞后（正）或提前（负）天数
+        std::size_t GetPredecessor() const;
+        std::size_t GetSuccessor() const;
+        const std::string& GetTypeText() const;
+        int GetLagDays() const;
+
+        void SetPredecessor(std::size_t Predecessor);
+        void SetSuccessor(std::size_t Successor);
+        void SetTypeText(const std::string& TypeText);
+        void SetLagDays(int LagDays);
+
+    private:
+        std::size_t m_uPredecessor;                //前置任务索引
+        std::size_t m_uSuccessor;                  //后置任务索引
+        std::string m_TypeText;                    //依赖类型文本（FS/SS/FF/SF）
+        int m_iLagDays;                            //滞后（正）或提前（负）天数
     };
 
     //【类名】ResourceInfo【功能】单种资源的展示信息（纯数据载体）
@@ -118,8 +160,15 @@ public:
         // 析构函数：无额外资源需要释放
         ~ResourceInfo();
 
-        std::string Name;                         //资源名称
-        double UnitCost;                          //单位时间成本
+        const std::string& GetName() const;
+        double GetUnitCost() const;
+
+        void SetName(const std::string& Name);
+        void SetUnitCost(double UnitCost);
+
+    private:
+        std::string m_Name;                       //资源名称
+        double m_rUnitCost;                       //单位时间成本
     };
 
     //【类名】ValidationInfo【功能】项目合理性校验结论（纯数据载体）
@@ -136,8 +185,15 @@ public:
         // 析构函数：无额外资源需要释放
         ~ValidationInfo();
 
-        bool IsValid;                             //项目是否满足全部合理性条件
-        std::vector<std::string> Messages;        //不合法时的逐条错误描述
+        bool IsValid() const;
+        const std::vector<std::string>& GetMessages() const;
+
+        void SetValid(bool IsValidValue);
+        void SetMessages(const std::vector<std::string>& Messages);
+
+    private:
+        bool m_bIsValid;                          //项目是否满足全部合理性条件
+        std::vector<std::string> m_Messages;      //不合法时的逐条错误描述
     };
 
     //【类名】ScheduleInfo【功能】CPM 调度计算结论（纯数据载体）
@@ -154,8 +210,15 @@ public:
         // 析构函数：无额外资源需要释放
         ~ScheduleInfo();
 
-        int ProjectDuration;                      //项目总工期（天）
-        std::vector<std::size_t> CriticalPath;    //关键路径任务索引（按拓扑序）
+        int GetProjectDuration() const;
+        const std::vector<std::size_t>& GetCriticalPath() const;
+
+        void SetProjectDuration(int ProjectDuration);
+        void SetCriticalPath(const std::vector<std::size_t>& CriticalPath);
+
+    private:
+        int m_iProjectDuration;                   //项目总工期（天）
+        std::vector<std::size_t> m_CriticalPath;  //关键路径任务索引（按拓扑序）
     };
 
     //【类名】StatisticsInfo【功能】项目统计信息汇总（纯数据载体）
@@ -172,12 +235,27 @@ public:
         // 析构函数：无额外资源需要释放
         ~StatisticsInfo();
 
-        std::string ProjectName;                  //项目名称
-        std::size_t TaskCount;                    //任务总数
-        std::size_t DependencyCount;              //依赖总数
-        std::size_t ResourceCount;                //资源总数
-        double TotalCost;                         //项目总成本
-        ScheduleInfo Schedule;                    //附带的调度计算结论
+        const std::string& GetProjectName() const;
+        std::size_t GetTaskCount() const;
+        std::size_t GetDependencyCount() const;
+        std::size_t GetResourceCount() const;
+        double GetTotalCost() const;
+        const ScheduleInfo& GetSchedule() const;
+
+        void SetProjectName(const std::string& ProjectName);
+        void SetTaskCount(std::size_t TaskCount);
+        void SetDependencyCount(std::size_t DependencyCount);
+        void SetResourceCount(std::size_t ResourceCount);
+        void SetTotalCost(double TotalCost);
+        void SetSchedule(const ScheduleInfo& Schedule);
+
+    private:
+        std::string m_ProjectName;                 //项目名称
+        std::size_t m_uTaskCount;                  //任务总数
+        std::size_t m_uDependencyCount;            //依赖总数
+        std::size_t m_uResourceCount;              //资源总数
+        double m_rTotalCost;                       //项目总成本
+        ScheduleInfo m_Schedule;                   //附带的调度计算结论
     };
 
     //任务信息列表类型
@@ -202,8 +280,8 @@ public:
     //-----------------------------------------------------------------------------------------------------------
     // 获取控制器的全局唯一实例
     static ProjectController& GetInstance();
-    // 把返回状态枚举翻译为英文描述文本，供界面显示
-    static std::string ResultToText(RES Result);
+    // 返回最近一次失败操作的详细错误信息
+    const std::string& GetLastError() const;
 
     //-----------------------------------------------------------------------------------------------------------
     //项目整体操作（修改类接口，失败详情写入 LastError）
@@ -284,12 +362,6 @@ private:
     //-----------------------------------------------------------------------------------------------------------
     ProjectRepository m_Repository;    //持有当前项目的仓库（MVC 中 C 对 M 的唯一入口）
     std::string m_LastError;           //最近一次修改类操作的失败详情文本
-
-public:
-    //-----------------------------------------------------------------------------------------------------------
-    //公有常引用数据成员（只读访问，无写规则）
-    //-----------------------------------------------------------------------------------------------------------
-    const std::string& LastError{m_LastError};    //最近一次修改类操作的失败详情（只读）
 };
 
 #endif

@@ -4,8 +4,8 @@
 //【开发者及日期】           2024013215, 2026-07-05
 //【更改记录】               2026-07-05 显式删除默认构造函数，并按编码规范 V1.3 重写注释。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_MILESTONE_TASK_HPP
-#define PROJECT_SCHEDULER_MILESTONE_TASK_HPP
+#ifndef MILESTONE_TASK_HPP
+#define MILESTONE_TASK_HPP
 
 //Task 基类所属头文件
 #include "model/Task.hpp"
@@ -14,9 +14,9 @@
 //【类名】             MilestoneTask
 //【功能】             里程碑任务：工期恒为 0 天，不可占用资源，用于标记项目某个阶段
 //                     的开始或结束，是 Task 的具体派生类之一。
-//【接口说明】         构造时仅需给定名称；GetDuration 恒返回 0，CanAllocateResource
-//                     恒为 false，Clone 多态复制自身，Print 输出任务信息；名称与依赖
-//                     关系等通用接口继承自 Task。任务必须有名称，故不提供默认构造函数。
+//【接口说明】         构造时仅需给定名称；GetDuration 恒返回 0，IsResourceAllocatable
+//                     恒为 false，Clone 多态复制自身；名称与依赖关系等通用接口
+//                     继承自 Task。任务必须有名称，故不提供默认构造函数。
 //【开发者及日期】     2024013215, 2026-07-05
 //【更改记录】         2026-07-05 显式删除默认构造函数，并按编码规范 V1.3 重写注释。
 //-------------------------------------------------------------------------------------------------------------------
@@ -42,11 +42,9 @@ public:
     // 里程碑工期恒为 0 天
     int GetDuration() const override;
     // 里程碑不可占用资源，恒返回 false
-    bool CanAllocateResource() const override;
+    bool IsResourceAllocatable() const override;
     // 多态复制：返回自身的深拷贝
     std::unique_ptr<Task> Clone() const override;
-    // 向给定输出流打印任务信息
-    void Print(std::ostream& Output) const override;
 };
 
 #endif

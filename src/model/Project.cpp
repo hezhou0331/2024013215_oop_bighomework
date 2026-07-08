@@ -206,7 +206,7 @@ void Project::RemoveTask(std::size_t TaskIndex)
 
     std::vector<Dependency> UpdatedDependencies;      //删除后仍保留的依赖，端点已平移
     for (const Dependency& CurrentDependency : m_Dependencies) {
-        if (CurrentDependency.InvolvesTask(TaskIndex)) {
+        if (CurrentDependency.HasTask(TaskIndex)) {
             continue;                                 //涉及被删任务的依赖直接丢弃
         }
 
@@ -266,7 +266,7 @@ void Project::UpdateTask(std::size_t TaskIndex,
                          m_Tasks[TaskIndex]->GetEF(),
                          m_Tasks[TaskIndex]->GetLS(),
                          m_Tasks[TaskIndex]->GetLF());
-    if (NewTask->CanAllocateResource()) {             //里程碑不能占用资源，迁移前先判断
+    if (NewTask->IsResourceAllocatable()) {           //里程碑不能占用资源，迁移前先判断
         for (const ResourceAllocation& Allocation :
              m_Tasks[TaskIndex]->GetResources()) {
             NewTask->AddResource(Allocation.GetResourceIndex(),
@@ -369,12 +369,15 @@ void Project::RemoveDependency(std::size_t DependencyIndex)
 //-------------------------------------------------------------------------------------------------------------------
 void Project::RemoveDependency(std::size_t Predecessor, std::size_t Successor)
 {
+    CheckTaskIndex(Predecessor);
+    CheckTaskIndex(Successor);
+
     //在依赖列表中查找首条匹配给定前置、后置任务的依赖
     auto iter = std::find_if(
         m_Dependencies.begin(),
         m_Dependencies.end(),
         [Predecessor, Successor](const Dependency& CurrentDependency) {
-            return CurrentDependency.Matches(Predecessor, Successor);
+            return CurrentDependency.HasEndpoints(Predecessor, Successor);
         });
     if (iter == m_Dependencies.end()) {               //未找到匹配依赖
         throw std::invalid_argument("Dependency does not exist.");
@@ -604,7 +607,7 @@ bool Project::HasDependency(std::size_t Predecessor,
                             std::size_t Successor) const
 {
     for (const Dependency& CurrentDependency : m_Dependencies) {
-        if (CurrentDependency.Matches(Predecessor, Successor)) {
+        if (CurrentDependency.HasEndpoints(Predecessor, Successor)) {
             return true;                              //找到匹配的依赖
         }
     }

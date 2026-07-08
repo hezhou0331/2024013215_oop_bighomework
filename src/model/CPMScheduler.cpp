@@ -90,28 +90,79 @@ ScheduleResult CPMScheduler::Calculate(Project& TargetProject) const
 
     TargetProject.ClearSchedule();
 
-    //四组时间参数数组，下标与项目任务表一致
-    //入度为 0 的任务（起点）最早开始时间为 0；其他任务初值为 INT_MIN 以允许负 Lag
     std::vector<int> EarliestStarts(TargetProject.GetTaskCount(),
                                     std::numeric_limits<int>::min());
     std::vector<int> EarliestFinishes(TargetProject.GetTaskCount(), 0);
     std::vector<int> LatestStarts(TargetProject.GetTaskCount(), 0);
     std::vector<int> LatestFinishes(TargetProject.GetTaskCount(), 0);
 
-    //统计每个任务的入度，初值为 0 的任务作为项目起点
-    std::vector<int> Indegrees(TargetProject.GetTaskCount(), 0);
-    for (const Dependency& CurrentDependency
-         : TargetProject.GetDependencies()) {
+    InitializeEarliestStarts(TargetProject, EarliestStarts);
+    RunForwardPass(TargetProject,
+                   Result.GetTopologicalOrder(),
+                   EarliestStarts,
+                   EarliestFinishes);
+    SetDurationFromEF(EarliestFinishes, Result);
+    InitializeLatestTimes(TargetProject,
+                          EarliestStarts,
+                          EarliestFinishes,
+                          LatestStarts,
+                          LatestFinishes,
+                          Result.GetProjectDuration());
+    RunBackwardPass(TargetProject,
+                    Result.GetTopologicalOrder(),
+                    EarliestStarts,
+                    EarliestFinishes,
+                    LatestStarts,
+                    LatestFinishes);
+    CollectScheduleResult(TargetProject, Result.GetTopologicalOrder(), Result);
+
+    return Result;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       CPMScheduler::InitializeEarliestStarts
+//【函数功能】       统计任务入度，把所有入度为 0 的起始任务最早开始时间设置为 0。
+//【参数】           SourceProject（输入参数）：待调度项目；
+//                   EarliestStarts（输出参数）：最早开始时间数组。
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void CPMScheduler::InitializeEarliestStarts(
+    const Project& SourceProject,
+    std::vector<int>& EarliestStarts) const
+{
+    std::vector<int> Indegrees(SourceProject.GetTaskCount(), 0);
+    for (const Dependency& CurrentDependency : SourceProject.GetDependencies()) {
         ++Indegrees[CurrentDependency.GetSuccessor()];
     }
-    for (std::size_t Index = 0; Index < TargetProject.GetTaskCount(); ++Index) {
+    for (std::size_t Index = 0; Index < SourceProject.GetTaskCount();
+         ++Index) {
         if (Indegrees[Index] == 0) {
             EarliestStarts[Index] = 0;
         }
     }
+}
 
-    //正推阶段：按拓扑序确定每个任务的最早完成，并把约束沿依赖推向后继
-    for (std::size_t Index : Result.GetTopologicalOrder()) {
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       CPMScheduler::RunForwardPass
+//【函数功能】       按拓扑序执行 CPM 正推，计算各任务最早完成时间，并沿依赖传播后继
+//                   任务的最早开始下界。
+//【参数】           TargetProject（输入/输出参数）：待调度项目；
+//                   TopologicalOrder（输入参数）：任务拓扑序；
+//                   EarliestStarts（输入/输出参数）：最早开始时间数组；
+//                   EarliestFinishes（输出参数）：最早完成时间数组。
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void CPMScheduler::RunForwardPass(
+    Project& TargetProject,
+    const std::vector<std::size_t>& TopologicalOrder,
+    std::vector<int>& EarliestStarts,
+    std::vector<int>& EarliestFinishes) const
+{
+    for (std::size_t Index : TopologicalOrder) {
         const Task& CurrentTask = TargetProject.GetTask(Index);
         EarliestFinishes[Index] = EarliestStarts[Index]
             + CurrentTask.GetDuration();
@@ -134,18 +185,53 @@ ScheduleResult CPMScheduler::Calculate(Project& TargetProject) const
             }
         }
     }
+}
 
-    //总工期为全体任务最早完成时间的最大值
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       CPMScheduler::SetDurationFromEF
+//【函数功能】       将全体任务最早完成时间的最大值写为项目总工期。
+//【参数】           EarliestFinishes（输入参数）：最早完成时间数组；
+//                   Result（输出参数）：待写入总工期的调度结果。
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void CPMScheduler::SetDurationFromEF(
+    const std::vector<int>& EarliestFinishes,
+    ScheduleResult& Result) const
+{
     int ProjectDuration = std::numeric_limits<int>::min();
     for (std::size_t Index = 0; Index < EarliestFinishes.size(); ++Index) {
         ProjectDuration = std::max(ProjectDuration, EarliestFinishes[Index]);
     }
     Result.SetProjectDuration(ProjectDuration);
+}
 
-    //逆推初值：所有任务最晚完成先取总工期，最晚开始随工期折算
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       CPMScheduler::InitializeLatestTimes
+//【函数功能】       以项目总工期为上界初始化各任务最晚完成时间，并按工期折算最晚开始
+//                   时间，同时把初始调度时间写回项目任务。
+//【参数】           TargetProject（输入/输出参数）：待调度项目；
+//                   EarliestStarts（输入参数）：最早开始时间数组；
+//                   EarliestFinishes（输入参数）：最早完成时间数组；
+//                   LatestStarts（输出参数）：最晚开始时间数组；
+//                   LatestFinishes（输出参数）：最晚完成时间数组；
+//                   ProjectDuration（输入参数）：项目总工期。
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void CPMScheduler::InitializeLatestTimes(
+    Project& TargetProject,
+    const std::vector<int>& EarliestStarts,
+    const std::vector<int>& EarliestFinishes,
+    std::vector<int>& LatestStarts,
+    std::vector<int>& LatestFinishes,
+    int ProjectDuration) const
+{
     for (std::size_t Index = 0; Index < TargetProject.GetTaskCount();
          ++Index) {
-        LatestFinishes[Index] = Result.GetProjectDuration();
+        LatestFinishes[Index] = ProjectDuration;
         LatestStarts[Index] = LatestFinishes[Index]
             - TargetProject.GetTask(Index).GetDuration();
         TargetProject.GetTask(Index).SetSchedule(EarliestStarts[Index],
@@ -153,10 +239,32 @@ ScheduleResult CPMScheduler::Calculate(Project& TargetProject) const
                                                  LatestStarts[Index],
                                                  LatestFinishes[Index]);
     }
+}
 
-    //逆推阶段：按逆拓扑序由后继依赖收紧每个任务的最晚开始时间
-    for (auto iter = Result.GetTopologicalOrder().rbegin();
-         iter != Result.GetTopologicalOrder().rend();
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       CPMScheduler::RunBackwardPass
+//【函数功能】       按逆拓扑序执行 CPM 逆推，由后继依赖收紧每个任务的最晚开始和最晚
+//                   完成时间。
+//【参数】           TargetProject（输入/输出参数）：待调度项目；
+//                   TopologicalOrder（输入参数）：任务拓扑序；
+//                   EarliestStarts（输入参数）：最早开始时间数组；
+//                   EarliestFinishes（输入参数）：最早完成时间数组；
+//                   LatestStarts（输入/输出参数）：最晚开始时间数组；
+//                   LatestFinishes（输入/输出参数）：最晚完成时间数组。
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void CPMScheduler::RunBackwardPass(
+    Project& TargetProject,
+    const std::vector<std::size_t>& TopologicalOrder,
+    const std::vector<int>& EarliestStarts,
+    const std::vector<int>& EarliestFinishes,
+    std::vector<int>& LatestStarts,
+    std::vector<int>& LatestFinishes) const
+{
+    for (auto iter = TopologicalOrder.rbegin();
+         iter != TopologicalOrder.rend();
          ++iter) {
         std::size_t Current = *iter;
         bool HasSuccessor = false;
@@ -181,16 +289,31 @@ ScheduleResult CPMScheduler::Calculate(Project& TargetProject) const
                                              LatestStarts[Current]);
             LatestFinishes[Current] = LatestStarts[Current]
                 + TargetProject.GetTask(Current).GetDuration();
-            TargetProject.GetTask(Current).SetSchedule(
-                EarliestStarts[Current],
-                EarliestFinishes[Current],
-                LatestStarts[Current],
-                LatestFinishes[Current]);
         }
+        TargetProject.GetTask(Current).SetSchedule(EarliestStarts[Current],
+                                                   EarliestFinishes[Current],
+                                                   LatestStarts[Current],
+                                                   LatestFinishes[Current]);
     }
+}
 
-    //收集结果：记录各任务时间参数，松弛为零的任务加入关键路径
-    for (std::size_t Index : Result.GetTopologicalOrder()) {
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       CPMScheduler::CollectScheduleResult
+//【函数功能】       按拓扑序收集各任务时间参数，写入调度结果，并把关键任务加入关键
+//                   路径列表。
+//【参数】           TargetProject（输入参数）：已写入调度时间的项目；
+//                   TopologicalOrder（输入参数）：任务拓扑序；
+//                   Result（输出参数）：待填充任务时间表与关键任务的调度结果。
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void CPMScheduler::CollectScheduleResult(
+    Project& TargetProject,
+    const std::vector<std::size_t>& TopologicalOrder,
+    ScheduleResult& Result) const
+{
+    for (std::size_t Index : TopologicalOrder) {
         const Task& CurrentTask = TargetProject.GetTask(Index);
         TaskScheduleInfo ScheduleInfo(
             CurrentTask.GetES(),
@@ -203,6 +326,4 @@ ScheduleResult CPMScheduler::Calculate(Project& TargetProject) const
             Result.AddCriticalTask(Index);
         }
     }
-
-    return Result;
 }

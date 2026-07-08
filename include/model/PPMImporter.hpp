@@ -5,8 +5,8 @@
 //【更改记录】               2026-07-07 基类重构为 Importer<Project> 模板，改为实现流解析接口。
 //                           2026-07-07 按行类型拆分解析函数，并增加区块顺序与连续性校验。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_PPM_IMPORTER_HPP
-#define PROJECT_SCHEDULER_PPM_IMPORTER_HPP
+#ifndef PPM_IMPORTER_HPP
+#define PPM_IMPORTER_HPP
 
 //Importer 基类模板所属头文件
 #include "model/Importer.hpp"
@@ -92,6 +92,17 @@ private:
         Project& TargetProject,
         const std::map<int, std::size_t>& TaskIdToIndex,
         const std::map<int, std::size_t>& ResourceIdToIndex);
+    // 处理解析异常：补充行号后重新抛出
+    static void HandleLineError(int LineNumber, const std::string& Kind,
+                                const std::exception& Exception);
+    // 分发行解析：根据行首标识类型调用对应的解析函数
+    static void DispatchLineParsing(
+        const std::string& Kind, std::istringstream& LineStream,
+        Project& NewProject, std::map<int, std::size_t>& TaskIdToIndex,
+        std::map<int, std::size_t>& ResourceIdToIndex);
+    // 更新已见区块集合：登记新区块并更新上一区块标识
+    static void UpdateSeenGroups(char GroupChar, std::string& SeenGroups,
+                                 char& LastGroup);
 };
 
 #endif

@@ -1,0 +1,4 @@
+# Invalid project: T line is BasicTask and must have positive duration
+P BasicTaskZeroDuration
+
+T 1 Task1 0

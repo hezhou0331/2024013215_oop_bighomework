@@ -1,9 +1,11 @@
 //-------------------------------------------------------------------------------------------------------------------
 //【文件名】                 ConsoleUI.cpp
-//【功能模块和目的】         实现控制台界面类：菜单显示、用户输入读取、命令分发，以及把
-//                           控制器回传的状态枚举与信息类格式化为控制台文本。
+//【功能模块和目的】         实现控制台界面类
+//                           菜单显示、用户输入读取、命令分发
+//                           把控制器回传的状态枚举与信息类格式化为控制台文本
 //【开发者及日期】           2024013215, 2026-07-05
-//【更改记录】               2026-07-07 配合控制器"状态枚举 + 信息类"接口重构，格式化职责移入本类。
+//【更改记录】               2026-07-07 配合控制器接口重构
+//                           格式化职责移入本类
 //-------------------------------------------------------------------------------------------------------------------
 #include "view/ConsoleUI.hpp"
 
@@ -18,9 +20,10 @@
 
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ConsoleUI::ConsoleUI
-//【函数功能】       默认构造控制台界面对象；界面无内部状态，无需额外初始化。
+//【函数功能】       默认构造控制台界面对象
+//                   界面无内部状态，无需额外初始化
 //【参数】           无
-//【返回值】         构造函数无返回值。
+//【返回值】         构造函数无返回值
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
@@ -28,9 +31,10 @@ ConsoleUI::ConsoleUI() = default;
 
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ConsoleUI::ConsoleUI
-//【函数功能】       拷贝构造控制台界面对象；界面无内部状态，采用默认逐成员拷贝。
-//【参数】           Source（输入参数）：被拷贝的界面对象。
-//【返回值】         构造函数无返回值。
+//【函数功能】       拷贝构造控制台界面对象
+//                   界面无内部状态，采用默认逐成员拷贝
+//【参数】           Source（输入参数）：被拷贝的界面对象
+//【返回值】         构造函数无返回值
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
@@ -38,9 +42,10 @@ ConsoleUI::ConsoleUI(const ConsoleUI& Source) = default;
 
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ConsoleUI::operator=
-//【函数功能】       拷贝赋值控制台界面对象；界面无内部状态，采用默认逐成员赋值。
-//【参数】           Source（输入参数）：赋值来源的界面对象。
-//【返回值】         返回自身引用，支持连续赋值。
+//【函数功能】       拷贝赋值控制台界面对象
+//                   界面无内部状态，采用默认逐成员赋值
+//【参数】           Source（输入参数）：赋值来源的界面对象
+//【返回值】         返回自身引用，支持连续赋值
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
@@ -66,7 +71,8 @@ ConsoleUI::~ConsoleUI() = default;
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::Execute()
 {
-    bool IsRunning = true;                            //主循环继续标志，选择退出或输入结束时置 false
+    bool IsRunning = true;
+    //主循环继续标志，选择退出或输入结束时置 false
     while (IsRunning == true) {
         try {
             PrintMenu();                              //先显示菜单再等待用户输入
@@ -130,7 +136,7 @@ bool ConsoleUI::HandleChoice(int Choice) const
         RemoveDependency();
         break;
     case 12 :                                         //删除依赖（按任务对）
-        RemoveDependencyByTaskPair();
+        RemoveDepByTaskPair();
         break;
     case 13 :                                         //添加资源
         AddResource();
@@ -158,10 +164,42 @@ bool ConsoleUI::HandleChoice(int Choice) const
 }
 
 //-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       ConsoleUI::ResultToText
+//【函数功能】       把控制器状态枚举翻译为界面层显示文本，避免控制器承担输出格式职责。
+//【参数】           Result（输入参数）：待翻译的控制器状态枚举值。
+//【返回值】         std::string，对应的英文提示文本。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+std::string ConsoleUI::ResultToText(ProjectController::RES Result) const
+{
+    switch (Result) {
+    case ProjectController::RES::SUCCESS :              //操作成功
+        return "Operation completed successfully.";
+    case ProjectController::RES::INVALID_ARGUMENT :     //参数被模型层拒绝
+        return "Invalid argument rejected by the model.";
+    case ProjectController::RES::INDEX_OUT_OF_RANGE :   //索引越界
+        return "Index out of range.";
+    case ProjectController::RES::SELF_DEPENDENCY :      //自依赖
+        return "Self-dependency is not allowed.";
+    case ProjectController::RES::CYCLE_DETECTED :       //将导致循环依赖
+        return "Dependency would create a cycle.";
+    case ProjectController::RES::FILE_ERROR :           //文件类型不支持或无法打开
+        return "File cannot be opened or its type is not supported.";
+    case ProjectController::RES::PARSE_ERROR :          //文件内容格式非法
+        return "File content is malformed.";
+    case ProjectController::RES::INVALID_PROJECT :      //项目不合理，无法调度
+        return "Cannot schedule an invalid project.";
+    default :                                           //其余取值一律视为未知错误
+        return "Unknown error.";
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ConsoleUI::PrintFailure
 //【函数功能】       输出失败状态对应的描述文本；对修改类操作追加控制器记录的失败详情。
 //【参数】           Result（输入参数）：控制器返回的失败状态枚举；
-//                   HasDetail（输入参数）：true 表示该操作会写 LastError，追加详情输出。
+//                   HasDetail（输入参数）：true 表示该操作会写错误详情，追加详情输出。
 //【返回值】         void，无返回值。
 //【开发者及日期】   2024013215, 2026-07-07
 //【更改记录】
@@ -170,10 +208,10 @@ void ConsoleUI::PrintFailure(ProjectController::RES Result,
                              bool HasDetail) const
 {
     ProjectController& Controller = ProjectController::GetInstance();
-    std::cout << ProjectController::ResultToText(Result) << "\n";
-    //修改类操作的失败详情由控制器 LastError 提供（如解析错误行号、模型拒绝原因）
-    if ((HasDetail == true) && (Controller.LastError.empty() == false)) {
-        std::cout << "Detail: " << Controller.LastError << "\n";
+    std::cout << ResultToText(Result) << "\n";
+    //修改类操作的失败详情由控制器提供（如解析错误行号、模型拒绝原因）
+    if ((HasDetail == true) && (Controller.GetLastError().empty() == false)) {
+        std::cout << "Detail: " << Controller.GetLastError() << "\n";
     }
 }
 
@@ -187,9 +225,9 @@ void ConsoleUI::PrintFailure(ProjectController::RES Result,
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::PrintSchedule(const ProjectController::ScheduleInfo& Info) const
 {
-    std::cout << "Project duration: " << Info.ProjectDuration << "\n";
+    std::cout << "Project duration: " << Info.GetProjectDuration() << "\n";
     std::cout << "Critical path:";
-    for (std::size_t Index : Info.CriticalPath) {
+    for (std::size_t Index : Info.GetCriticalPath()) {
         std::cout << " " << Index;                    //同行列出关键路径上的任务索引
     }
     std::cout << "\n";
@@ -254,7 +292,7 @@ void ConsoleUI::ExportProject() const
         std::cout << "Project exported.\n";
     }
     else {
-        PrintFailure(Result, false);                  //const 查询接口不写 LastError
+        PrintFailure(Result, true);                   //导出失败时输出具体文件错误
     }
 }
 
@@ -344,20 +382,20 @@ void ConsoleUI::ListTasks() const
     std::cout << "Tasks:\n";
     //逐个任务输出基本信息、时间参数及前驱后继索引
     for (const ProjectController::TaskInfo& Info : InfoList) {
-        std::cout << "[" << Info.Index << "] " << Info.Name
-                  << " Duration=" << Info.Duration
-                  << " Cost=" << Info.TotalCost
-                  << " ES=" << Info.EarlyStart
-                  << " EF=" << Info.EarlyFinish
-                  << " LS=" << Info.LateStart
-                  << " LF=" << Info.LateFinish
-                  << " Slack=" << Info.SlackDays
+        std::cout << "[" << Info.GetIndex() << "] " << Info.GetName()
+                  << " Duration=" << Info.GetDuration()
+                  << " Cost=" << Info.GetTotalCost()
+                  << " ES=" << Info.GetEarlyStart()
+                  << " EF=" << Info.GetEarlyFinish()
+                  << " LS=" << Info.GetLateStart()
+                  << " LF=" << Info.GetLateFinish()
+                  << " Slack=" << Info.GetSlackDays()
                   << "\n  Predecessors:";
-        for (std::size_t PredecessorIndex : Info.Predecessors) {
+        for (std::size_t PredecessorIndex : Info.GetPredecessors()) {
             std::cout << " " << PredecessorIndex;     //同行列出全部前驱任务索引
         }
         std::cout << "\n  Successors:";
-        for (std::size_t SuccessorIndex : Info.Successors) {
+        for (std::size_t SuccessorIndex : Info.GetSuccessors()) {
             std::cout << " " << SuccessorIndex;       //同行列出全部后继任务索引
         }
         std::cout << "\n";
@@ -384,22 +422,23 @@ void ConsoleUI::ListTaskRelations() const
                                                                 Predecessors,
                                                                 Successors);
     if (Result != ProjectController::RES::SUCCESS) {
-        PrintFailure(Result, false);                  //const 查询接口不写 LastError
+        PrintFailure(Result, false);                  //const 查询接口不写错误详情
         return;
     }
 
     //先输出被查询任务自身的索引、名称与工期
-    std::cout << "Task " << QueriedTask.Index << " (" << QueriedTask.Name
-              << ") - " << QueriedTask.Duration << " days\n";
+    std::cout << "Task " << QueriedTask.GetIndex() << " ("
+              << QueriedTask.GetName() << ") - "
+              << QueriedTask.GetDuration() << " days\n";
     std::cout << "Predecessors:\n";
     if (Predecessors.empty()) {                       //无前驱时显式提示 None
         std::cout << "  None\n";
     }
     //逐个输出前驱任务的索引、名称与工期
     for (const ProjectController::TaskInfo& Info : Predecessors) {
-        std::cout << "  - Index: " << Info.Index
-                  << ", Name: " << Info.Name
-                  << ", Duration: " << Info.Duration << "\n";
+        std::cout << "  - Index: " << Info.GetIndex()
+                  << ", Name: " << Info.GetName()
+                  << ", Duration: " << Info.GetDuration() << "\n";
     }
     std::cout << "Successors:\n";
     if (Successors.empty()) {                         //无后继时显式提示 None
@@ -407,9 +446,9 @@ void ConsoleUI::ListTaskRelations() const
     }
     //逐个输出后继任务的索引、名称与工期
     for (const ProjectController::TaskInfo& Info : Successors) {
-        std::cout << "  - Index: " << Info.Index
-                  << ", Name: " << Info.Name
-                  << ", Duration: " << Info.Duration << "\n";
+        std::cout << "  - Index: " << Info.GetIndex()
+                  << ", Name: " << Info.GetName()
+                  << ", Duration: " << Info.GetDuration() << "\n";
     }
 }
 
@@ -463,14 +502,14 @@ void ConsoleUI::RemoveDependency() const
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       ConsoleUI::RemoveDependencyByTaskPair
+//【函数名称】       ConsoleUI::RemoveDepByTaskPair
 //【函数功能】       读取前置与后置任务索引，请求控制器删除该任务对之间的依赖关系。
 //【参数】           无
 //【返回值】         void，无返回值。
 //【开发者及日期】   2024013215, 2026-07-07
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
-void ConsoleUI::RemoveDependencyByTaskPair() const
+void ConsoleUI::RemoveDepByTaskPair() const
 {
     ProjectController& Controller = ProjectController::GetInstance();
     std::size_t Predecessor = GetPositiveIndex("Predecessor task index: ");
@@ -503,10 +542,10 @@ void ConsoleUI::ListDependencies() const
     for (std::size_t Index = 0; Index < InfoList.size(); ++Index) {
         const ProjectController::DependencyInfo& Info = InfoList[Index];
         std::cout << "[" << Index << "] "
-                  << Info.Predecessor << " -> "
-                  << Info.Successor << " "
-                  << Info.TypeText << " Lag="
-                  << Info.LagDays << "\n";
+                  << Info.GetPredecessor() << " -> "
+                  << Info.GetSuccessor() << " "
+                  << Info.GetTypeText() << " Lag="
+                  << Info.GetLagDays() << "\n";
     }
 }
 
@@ -550,8 +589,8 @@ void ConsoleUI::ListResources() const
     //逐个资源输出索引、名称与单位成本
     for (std::size_t Index = 0; Index < InfoList.size(); ++Index) {
         const ProjectController::ResourceInfo& Info = InfoList[Index];
-        std::cout << "[" << Index << "] " << Info.Name
-                  << " UnitCost=" << Info.UnitCost << "\n";
+        std::cout << "[" << Index << "] " << Info.GetName()
+                  << " UnitCost=" << Info.GetUnitCost() << "\n";
     }
 }
 
@@ -593,13 +632,13 @@ void ConsoleUI::ValidateProject() const
     ProjectController& Controller = ProjectController::GetInstance();
     ProjectController::ValidationInfo Info;
     Controller.ValidateProject(Info);                 //采集校验结论
-    if (Info.IsValid == true) {
+    if (Info.IsValid() == true) {
         std::cout << "Project is valid.\n";
         return;
     }
     std::cout << "Project is invalid:\n";
     //逐条列出校验器给出的错误信息
-    for (const std::string& Message : Info.Messages) {
+    for (const std::string& Message : Info.GetMessages()) {
         std::cout << "- " << Message << "\n";
     }
 }
@@ -640,13 +679,13 @@ void ConsoleUI::ShowStatistics() const
     ProjectController::StatisticsInfo Info;
     ProjectController::RES Result = Controller.CollectStatistics(Info);
     std::cout << std::fixed << std::setprecision(2);  //总成本统一保留两位小数显示
-    std::cout << "Project: " << Info.ProjectName << "\n"
-              << "Tasks: " << Info.TaskCount << "\n"
-              << "Dependencies: " << Info.DependencyCount << "\n"
-              << "Resources: " << Info.ResourceCount << "\n"
-              << "Total cost: " << Info.TotalCost << "\n";
+    std::cout << "Project: " << Info.GetProjectName() << "\n"
+              << "Tasks: " << Info.GetTaskCount() << "\n"
+              << "Dependencies: " << Info.GetDependencyCount() << "\n"
+              << "Resources: " << Info.GetResourceCount() << "\n"
+              << "Total cost: " << Info.GetTotalCost() << "\n";
     if (Result == ProjectController::RES::SUCCESS) {  //统计末尾附带调度结论
-        PrintSchedule(Info.Schedule);
+        PrintSchedule(Info.GetSchedule());
     }
     else {
         PrintFailure(Result, true);                   //修改类操作，附带失败详情

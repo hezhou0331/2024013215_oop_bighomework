@@ -10,7 +10,7 @@
 ## ✅ 代码质量检查
 
 - [x] 编译无警告无错误 (`mingw32-make` with `-Wall -Wextra -pedantic`)
-- [x] 所有 25 个自动化测试通过 (100% 成功率)
+- [x] 所有 29 个自动化测试通过 (100% 成功率)
 - [x] 所有虚析构函数已声明 (基类)
 - [x] 所有派生类使用 `override` 关键字
 - [x] 所有查询接口使用后置 `const`
@@ -32,7 +32,7 @@
 
 ### 2.2 类设计实现 (59-60/60)
 - [x] Task 继承体系 (abstract base + BasicTask/MilestoneTask)
-- [x] 多态应用 (虚函数: GetDuration/CanAllocateResource/Clone/Print)
+- [x] 多态应用 (虚函数: GetDuration/IsResourceAllocatable/Clone)
 - [x] 工厂模式 (FilePorter/Importer/Exporter 模板 + PPMImporter/PPMExporter)
 - [x] MVC 分层清晰 (Model/Controller/View 职责明确分离)
 - [x] 状态枚举 + DTO 信息类接口
@@ -50,7 +50,7 @@
 
 ## ✅ 测试覆盖清单
 
-**自动化测试**: 25/25 ✅
+**自动化测试**: 29/29 ✅
 - 基础功能: 3/3 (import, export, task relations)
 - CPM 调度: 4/4 (FS/SS/FF/SF dependency types)
 - 验证校验: 2/2 (isolated tasks, cycles)
@@ -79,11 +79,11 @@
 2. ✅ Project 构造器使用 SetName (架构一致性)
 3. ✅ 添加 ConsoleUI GetPositiveIndex 辅助 (7 处应用)
 4. ✅ 修复 ProjectController::AssignResource 异常映射
-5. ✅ 编译 + 重测 (25/25 通过)
+5. ✅ 编译 + 重测 (29/29 通过)
 
 ### Round 2 (Score: 94-96 → 97-99)
 6. ✅ Task 构造器也使用 SetName (完全一致性)
-7. ✅ 编译 + 重测 (仍 25/25 通过，零警告)
+7. ✅ 编译 + 重测 (仍 29/29 通过，零警告)
 
 ---
 
@@ -120,7 +120,7 @@ ff9e2be Add comprehensive sprint assessment and completion report
 - [x] 工作目录干净 (`git status` 无未提交文件)
 - [x] 所有改进已提交到 GitHub
 - [x] 编译无警告: ✅ (已验证)
-- [x] 测试 25/25: ✅ (已验证)
+- [x] 测试 29/29: ✅ (已验证)
 - [x] 文档完整: ✅ (6 个文档)
 - [x] 代码规范: ✅ (所有检查通过)
 - [x] 架构一致: ✅ (构造器和 SetName 同步)
@@ -138,7 +138,7 @@ ff9e2be Add comprehensive sprint assessment and completion report
 4. 最终状态: 97/100 (生产就绪)
 
 所有改进都附带提交记录，可追踪所有优化步骤。
-25/25 自动化测试全通过，零编译警告。
+29/29 自动化测试全通过，零编译警告。
 ```
 
 ### 关键竞争优势

@@ -30,7 +30,7 @@ cd tests
 powershell -ExecutionPolicy Bypass -File run_tests.ps1
 ```
 
-测试覆盖 3 个基础功能场景 + 22 个边界和异常场景，共 **25 个测试用例**，**全部通过**，包括：
+测试覆盖 3 个基础功能场景 + 26 个边界和异常场景，共 **29 个测试用例**，**全部通过**，包括：
 - 基础功能：项目导入、任务关系、项目导出
 - 依赖管理：按索引删除、按任务对删除（新增）
 - 图合法性：孤立任务、环路、缺失任务、多起点多终点（新增）
@@ -62,7 +62,7 @@ powershell -ExecutionPolicy Bypass -File run_tests.ps1
 |-----|------|--------|
 | Task 体系 | 抽象基类 + BasicTask/MilestoneTask 派生 | `include/model/Task.hpp`、`BasicTask.hpp`、`MilestoneTask.hpp` |
 | 虚析构 | 所有基类析构均为 virtual | `include/model/Task.hpp` 第 47 行 |
-| 纯虚函数 | GetDuration、CanAllocateResource、Clone、Print | `include/model/Task.hpp` 第 66-72 行 |
+| 纯虚函数 | GetDuration、IsResourceAllocatable、Clone | `include/model/Task.hpp` |
 | 里氏替换 | BasicTask/MilestoneTask 可作 Task* 使用 | `src/model/Project.cpp:GetTask` |
 | 多态应用 | 工期 0 自动转为里程碑（保留下标和依赖） | `src/model/Project.cpp:UpdateTask` |
 
@@ -94,8 +94,8 @@ powershell -ExecutionPolicy Bypass -File run_tests.ps1
 |-----|------|--------|
 | 单例 | ProjectController::GetInstance() | `src/controller/ProjectController.cpp` |
 | 状态返回 | RES 枚举（SUCCESS/INVALID_ARGUMENT/...） | `include/controller/ProjectController.hpp` 第 47-57 行 |
-| DTO | TaskInfo/DependencyInfo/... 嵌套类 | `include/controller/ProjectController.hpp` 第 62-...行 |
-| 错误信息 | LastError 常引用只读成员 | `include/controller/ProjectController.hpp` § 3.2 |
+| DTO | TaskInfo/DependencyInfo/... 嵌套信息类，私有字段 + 读写接口 | `include/controller/ProjectController.hpp` 第 62-...行 |
+| 错误信息 | GetLastError() 只读访问失败详情 | `include/controller/ProjectController.hpp` § 3.2 |
 
 ### 2.3 代码规范（30%）
 
@@ -139,6 +139,56 @@ Project duration: 22
 Total cost: 9030.00
 Critical path: 0 1 2 3 4
 ```
+
+---
+
+## 设计模式应用
+
+本项目应用了以下 4 种经典设计模式，提升代码的可扩展性与可维护性：
+
+### 1. 工厂模式（Factory Pattern）
+
+**目的**：按文件扩展名动态选择合适的导入/导出器，支持无限扩展新格式。
+
+**位置**：
+- `include/model/Importer.hpp`：`Register<T>()`、`GetInstanceByFileName()`
+- `include/model/Exporter.hpp`：`Register<T>()`、`GetInstanceByFileName()`
+- `src/controller/ProjectController.cpp` 构造函数：注册 PPMImporter/PPMExporter
+
+**扩展示例**：支持 XML/JSON 格式只需：
+1. 继承 `Importer<Project>`，实现 `LoadFromStream()`
+2. 在 ProjectController 构造函数中一行注册：`Importer<Project>::Register<XMLImporter>()`
+3. 无需修改现有任何代码 ✓ 符合开闭原则
+
+### 2. 模板方法模式（Template Method Pattern）
+
+**目的**：定义统一的文件导入/导出流程，避免各个具体导入/导出器重复实现文件打开、关闭等通用逻辑。
+
+**位置**：
+- `include/model/Importer.hpp` 的 `LoadFromFile()`：打开文件 → 调用派生类的 `LoadFromStream()` → 返回结果
+- `include/model/Exporter.hpp` 的 `SaveToFile()`：创建文件 → 调用派生类的 `SaveToStream()` → 返回结果
+
+**效果**：通用部分与特定部分清晰分离，减少代码重复。
+
+### 3. 策略模式（Strategy Pattern）
+
+**目的**：不同文件格式的导入/导出策略可以相互替换，客户端代码无需关心具体策略。
+
+**位置**：
+- `include/model/PPMImporter.hpp`、`include/model/PPMExporter.hpp`
+- 控制器通过工厂获取合适的导入/导出器后调用统一接口，无需 if-else 判断
+
+**效果**：如需支持新格式，仅添加新策略类，无需改动现有逻辑。
+
+### 4. 单例模式（Singleton Pattern）
+
+**目的**：确保项目中仅有一个控制器实例，方便全局访问业务接口。
+
+**位置**：`include/controller/ProjectController.hpp` 的 `GetInstance()`
+
+**实现**：函数内静态对象，在 C++11 及后续标准下线程安全。
+
+**效果**：不需全局变量，控制器状态唯一。
 
 ---
 

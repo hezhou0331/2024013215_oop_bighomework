@@ -64,18 +64,18 @@
 
 ---
 
-### ✅ 需求 4：检查 DTO 信息类 public 数据成员
+### ✅ 需求 4：封装 DTO 信息类数据成员
 
-**现状**：6 个 DTO 类（TaskInfo、DependencyInfo、ResourceInfo、ValidationInfo、ScheduleInfo、StatisticsInfo）都采用公有数据成员  
+**现状**：6 个 DTO 类（TaskInfo、DependencyInfo、ResourceInfo、ValidationInfo、ScheduleInfo、StatisticsInfo）均已改为私有数据成员，通过 getter/setter 访问。  
 
 **设计依据**（已在 docs/design.md 3.2.1 详细文档化）：
 - **纯数据结构**：DTO 无业务规则，仅承载数据传递
-- **编码规范例外条款**：2.8.9 明确允许纯数据容器采用公有成员
+- **规范优先**：避免依赖公有数据成员例外条款，主动满足封装要求
 - **完全合规**：每个 DTO 显式定义了构造、拷贝构造、拷贝赋值、析构
-- **接口内聚**：DTO 内嵌于 ProjectController，数据交换协议在一处完整定义
-- **避免虚假复杂性**：60+ 行的 getter/setter 不增加安全性，消费者仍为只读使用
+- **接口内聚**：DTO 内嵌于 ProjectController，数据交换协议和访问接口在一处完整定义
+- **职责清晰**：Controller 组装 DTO，ConsoleUI 只通过只读接口展示
 
-**结论**：✅ **设计合理，符合规范，无需修改**
+**结论**：✅ **已消除公有数据成员扣分风险**
 
 ---
 

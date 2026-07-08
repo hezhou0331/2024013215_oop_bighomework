@@ -5,8 +5,8 @@
 //【开发者及日期】           2024013215, 2026-07-07
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_FILE_PORTER_HPP
-#define PROJECT_SCHEDULER_FILE_PORTER_HPP
+#ifndef FILE_PORTER_HPP
+#define FILE_PORTER_HPP
 
 //std::invalid_argument 异常基类所属头文件
 #include <stdexcept>
@@ -92,11 +92,6 @@ public:
     static std::string GetExtName(const std::string& FileName);
     // 返回字符串的大写副本，用于扩展名的不区分大小写比较
     static std::string ToUpperCopy(const std::string& Text);
-
-    //-----------------------------------------------------------------------------------------------------------
-    //公有静态常量数据成员
-    //-----------------------------------------------------------------------------------------------------------
-    static constexpr FilePorterType PORT_TYPE{DIRECTION};    //本接口的传输方向
 
 protected:
     //-----------------------------------------------------------------------------------------------------------

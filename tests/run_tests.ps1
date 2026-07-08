@@ -44,6 +44,9 @@ mingw32-make | Out-Host
 if (Test-Path "tests\exported_by_test.PPM") {
     Remove-Item "tests\exported_by_test.PPM"
 }
+if (Test-Path "tests\missing_dir") {
+    Remove-Item "tests\missing_dir" -Recurse -Force
+}
 
 $Cases = @(
     @{
@@ -123,6 +126,7 @@ tests\cycle.PPM
             "Project imported.",
             "Project is invalid:",
             "Dependency graph has a cycle.",
+            "Task 0 is in or blocked by a cycle.",
             "Cannot schedule an invalid project."
         )
     },
@@ -175,6 +179,18 @@ tests\negative_duration.PPM
         )
     },
     @{
+        Name = "Basic task zero duration import error"
+        InputText = @"
+2
+tests\basic_task_zero_duration.PPM
+0
+"@
+        ExpectedTexts = @(
+            "PPM parse error at line",
+            "positive"
+        )
+    },
+    @{
         Name = "Milestone resource allocation error"
         InputText = @"
 2
@@ -199,18 +215,57 @@ tests\nonexistent_dependency_reference.PPM
         )
     },
     @{
+        Name = "Add dependency out-of-range task index"
+        InputText = @"
+2
+samples\simple.PPM
+9
+99
+0
+FS
+0
+0
+"@
+        ExpectedTexts = @(
+            "Project imported.",
+            "Index out of range.",
+            "Detail: Task index is out of range."
+        )
+    },
+    @{
+        Name = "Assign resource out-of-range resource index"
+        InputText = @"
+2
+samples\simple.PPM
+15
+0
+99
+1
+0
+"@
+        ExpectedTexts = @(
+            "Project imported.",
+            "Index out of range.",
+            "Detail: Resource index is out of range."
+        )
+    },
+    @{
         Name = "SS dependency scheduling"
         InputText = @"
 2
 tests\ss_dependency.PPM
 16
 17
+5
 0
 "@
         ExpectedTexts = @(
             "Project imported.",
             "Project is valid.",
-            "Project duration:"
+            "Project duration: 5",
+            "Critical path: 0 1",
+            "[0] Task1 Duration=5 Cost=250.00 ES=0 EF=5 LS=0 LF=5 Slack=0",
+            "[1] Task2 Duration=3 Cost=150.00 ES=2 EF=5 LS=2 LF=5 Slack=0"
         )
     },
     @{
@@ -220,12 +275,16 @@ tests\ss_dependency.PPM
 tests\ff_dependency.PPM
 16
 17
+5
 0
 "@
         ExpectedTexts = @(
             "Project imported.",
             "Project is valid.",
-            "Project duration:"
+            "Project duration: 4",
+            "Critical path: 0",
+            "[0] Task1 Duration=4 Cost=0.00 ES=0 EF=4 LS=0 LF=4 Slack=0",
+            "[1] Task2 Duration=3 Cost=0.00 ES=0 EF=3 LS=1 LF=4 Slack=1"
         )
     },
     @{
@@ -235,12 +294,16 @@ tests\ff_dependency.PPM
 tests\sf_dependency.PPM
 16
 17
+5
 0
 "@
         ExpectedTexts = @(
             "Project imported.",
             "Project is valid.",
-            "Project duration:"
+            "Project duration: 3",
+            "Critical path: 0",
+            "[0] Task1 Duration=3 Cost=0.00 ES=0 EF=3 LS=0 LF=3 Slack=0",
+            "[1] Task2 Duration=5 Cost=0.00 ES=-4 EF=1 LS=-2 LF=3 Slack=2"
         )
     },
     @{
@@ -280,6 +343,18 @@ tests\milestone_nonzero_duration.PPM
         )
     },
     @{
+        Name = "Milestone non-integer duration token error"
+        InputText = @"
+2
+tests\milestone_bad_duration_token.PPM
+0
+"@
+        ExpectedTexts = @(
+            "PPM parse error at line",
+            "Milestone"
+        )
+    },
+    @{
         Name = "Negative resource cost error"
         InputText = @"
 2
@@ -303,7 +378,7 @@ tests\dep_removal_by_pair.PPM
         )
     },
     @{
-        Name = "Export failure with PPM file"
+        Name = "Export failure source project import"
         InputText = @"
 2
 tests\export_failure.PPM
@@ -311,6 +386,22 @@ tests\export_failure.PPM
 "@
         ExpectedTexts = @(
             "Project imported."
+        )
+    },
+    @{
+        Name = "Export failure reports detail"
+        InputText = @"
+2
+tests\export_failure.PPM
+3
+tests\missing_dir\cannot_write.PPM
+0
+"@
+        ExpectedTexts = @(
+            "Project imported.",
+            "File cannot be opened or its type is not supported.",
+            "Detail:",
+            "open fail"
         )
     },
     @{
@@ -351,10 +442,19 @@ tests\multi_start_end.PPM
         InputText = @"
 2
 tests\negative_lag_constraint.PPM
+16
+17
+5
 0
 "@
         ExpectedTexts = @(
-            "Project imported."
+            "Project imported.",
+            "Project is valid.",
+            "Project duration: 9",
+            "Critical path: 0 1 2",
+            "[0] Task1 Duration=5 Cost=0.00 ES=0 EF=5 LS=0 LF=5 Slack=0",
+            "[1] Task2 Duration=3 Cost=0.00 ES=3 EF=6 LS=3 LF=6 Slack=0",
+            "[2] Task3 Duration=4 Cost=0.00 ES=5 EF=9 LS=5 LF=9 Slack=0"
         )
     }
 )

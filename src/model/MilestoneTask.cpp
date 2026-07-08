@@ -7,9 +7,6 @@
 //MilestoneTask 类所属头文件
 #include "model/MilestoneTask.hpp"
 
-//std::ostream 所属头文件
-#include <iostream>
-
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       MilestoneTask::MilestoneTask
 //【函数功能】       以名称构造里程碑任务；里程碑工期恒为 0，无需额外成员初始化。
@@ -68,14 +65,14 @@ int MilestoneTask::GetDuration() const
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       MilestoneTask::CanAllocateResource
+//【函数名称】       MilestoneTask::IsResourceAllocatable
 //【函数功能】       判断本任务能否占用资源；里程碑不消耗工时，不可占用资源。
 //【参数】           无
 //【返回值】         bool，恒为 false，表示里程碑不可占用资源。
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
-bool MilestoneTask::CanAllocateResource() const
+bool MilestoneTask::IsResourceAllocatable() const
 {
     return false;
 }
@@ -91,17 +88,4 @@ bool MilestoneTask::CanAllocateResource() const
 std::unique_ptr<Task> MilestoneTask::Clone() const
 {
     return std::make_unique<MilestoneTask>(*this);
-}
-
-//-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       MilestoneTask::Print
-//【函数功能】       向输出流打印里程碑任务信息（类型名、名称、工期与调度时间）。
-//【参数】           Output（输出参数）：接收打印内容的输出流。
-//【返回值】         void，无返回值。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
-//-------------------------------------------------------------------------------------------------------------------
-void MilestoneTask::Print(std::ostream& Output) const
-{
-    PrintCommon(Output, "MilestoneTask");
 }

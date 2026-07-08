@@ -5,8 +5,8 @@
 //【开发者及日期】           2024013215, 2026-07-07
 //【更改记录】               2026-07-07 由非模板抽象基类重构为类模板，增加扩展名注册工厂。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_IMPORTER_HPP
-#define PROJECT_SCHEDULER_IMPORTER_HPP
+#ifndef IMPORTER_HPP
+#define IMPORTER_HPP
 
 //FilePorter 基类模板所属头文件
 #include "model/FilePorter.hpp"
@@ -32,7 +32,7 @@
 //                     静态 Register<DERIVED> 注册一种具体导入器（扩展名不可重复）；静态
 //                     GetInstanceByFileName/GetInstanceByExtName 按文件名/扩展名查找已注册
 //                     导入器实例指针，未注册抛出 INVALID_FILE_TYPE；构造函数受保护，禁止
-//                     拷贝与赋值；ExtName 为扩展名的公有常引用（只读）。
+//                     拷贝与赋值；GetSupportedExtName 只读返回所支持扩展名。
 //【开发者及日期】     2024013215, 2026-07-07
 //【更改记录】         2026-07-07 由非模板抽象基类重构为类模板，增加扩展名注册工厂。
 //-------------------------------------------------------------------------------------------------------------------
@@ -56,6 +56,8 @@ public:
     T LoadFromFile(const std::string& FileName) const;
     // 从已打开的文件流解析出 T 类型对象，由具体格式派生类实现
     virtual T LoadFromStream(std::ifstream& Stream) const = 0;
+    // 返回本导入器支持的文件扩展名（不含 '.'）
+    const std::string& GetSupportedExtName() const;
 
     //-----------------------------------------------------------------------------------------------------------
     //静态工厂成员函数
@@ -85,12 +87,6 @@ private:
 
     //所有已注册导入器实例指针的列表（静态工厂的登记表）
     static std::vector<std::shared_ptr<Importer<T>>> m_pImporters;
-
-public:
-    //-----------------------------------------------------------------------------------------------------------
-    //公有常引用数据成员（只读访问，无写规则）
-    //-----------------------------------------------------------------------------------------------------------
-    const std::string& ExtName{m_ExtName};    //本导入器支持的文件扩展名（只读）
 };
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -131,6 +127,20 @@ template<class T>
 Importer<T>::~Importer() = default;
 
 //-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       Importer::GetSupportedExtName
+//【函数功能】       读取本导入器支持的文件扩展名。
+//【参数】           无
+//【返回值】         const std::string&，本导入器支持的文件扩展名（不含 '.'）。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+template<class T>
+const std::string& Importer<T>::GetSupportedExtName() const
+{
+    return m_ExtName;
+}
+
+//-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       Importer::LoadFromFile
 //【函数功能】       完成统一导入流程：校验文件扩展名、测试文件可读性、打开文件流，再
 //                   调用派生类实现的 LoadFromStream 解析出模型对象。
@@ -168,9 +178,9 @@ void Importer<T>::Register()
         = std::make_shared<DERIVED>();
     //扩展名查重（不区分大小写），同一扩展名只允许一个导入器
     for (const std::shared_ptr<Importer<T>>& pImporter : m_pImporters) {
-        if (ToUpperCopy(pImporter->ExtName)
-            == ToUpperCopy(pDerivedImporter->ExtName)) {
-            throw INVALID_FILE_TYPE(pDerivedImporter->ExtName);
+        if (ToUpperCopy(pImporter->GetSupportedExtName())
+            == ToUpperCopy(pDerivedImporter->GetSupportedExtName())) {
+            throw INVALID_FILE_TYPE(pDerivedImporter->GetSupportedExtName());
         }
     }
     m_pImporters.push_back(pDerivedImporter);
@@ -207,7 +217,8 @@ std::shared_ptr<Importer<T>> Importer<T>::GetInstanceByExtName(
 {
     //遍历登记表，扩展名比较不区分大小写
     for (const std::shared_ptr<Importer<T>>& pImporter : m_pImporters) {
-        if (ToUpperCopy(pImporter->ExtName) == ToUpperCopy(FileExtName)) {
+        if (ToUpperCopy(pImporter->GetSupportedExtName())
+            == ToUpperCopy(FileExtName)) {
             return pImporter;
         }
     }

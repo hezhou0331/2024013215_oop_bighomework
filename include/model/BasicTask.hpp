@@ -4,8 +4,8 @@
 //【开发者及日期】           2024013215, 2026-07-05
 //【更改记录】               2026-07-05 显式删除默认构造函数，并按编码规范 V1.3 重写注释。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_BASIC_TASK_HPP
-#define PROJECT_SCHEDULER_BASIC_TASK_HPP
+#ifndef BASIC_TASK_HPP
+#define BASIC_TASK_HPP
 
 //Task 基类所属头文件
 #include "model/Task.hpp"
@@ -14,9 +14,9 @@
 //【类名】             BasicTask
 //【功能】             普通任务：具有正整数工期（单位：天），可以占用资源，是 Task 的
 //                     具体派生类之一。
-//【接口说明】         构造时给定名称与工期；GetDuration 返回工期，CanAllocateResource
-//                     恒为 true，Clone 多态复制自身，Print 输出任务信息；名称、依赖
-//                     关系与资源分配等通用接口继承自 Task。任务必须有名称与工期，
+//【接口说明】         构造时给定名称与工期；GetDuration 返回工期，IsResourceAllocatable
+//                     恒为 true，Clone 多态复制自身；名称、依赖关系与资源分配等
+//                     通用接口继承自 Task。任务必须有名称与工期，
 //                     故不提供默认构造函数。
 //【开发者及日期】     2024013215, 2026-07-05
 //【更改记录】         2026-07-05 显式删除默认构造函数，并按编码规范 V1.3 重写注释。
@@ -43,11 +43,9 @@ public:
     // 返回任务工期（天）
     int GetDuration() const override;
     // 普通任务可以占用资源，恒返回 true
-    bool CanAllocateResource() const override;
+    bool IsResourceAllocatable() const override;
     // 多态复制：返回自身的深拷贝
     std::unique_ptr<Task> Clone() const override;
-    // 向给定输出流打印任务信息
-    void Print(std::ostream& Output) const override;
 
 private:
     //-----------------------------------------------------------------------------------------------------------

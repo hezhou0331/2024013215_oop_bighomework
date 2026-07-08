@@ -7,8 +7,6 @@
 //BasicTask 类所属头文件
 #include "model/BasicTask.hpp"
 
-//std::ostream 所属头文件
-#include <iostream>
 //std::invalid_argument 所属头文件
 #include <stdexcept>
 
@@ -74,14 +72,14 @@ int BasicTask::GetDuration() const
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       BasicTask::CanAllocateResource
+//【函数名称】       BasicTask::IsResourceAllocatable
 //【函数功能】       判断本任务能否占用资源；普通任务总是可以占用资源。
 //【参数】           无
 //【返回值】         bool，恒为 true，表示普通任务可以占用资源。
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
-bool BasicTask::CanAllocateResource() const
+bool BasicTask::IsResourceAllocatable() const
 {
     return true;
 }
@@ -97,17 +95,4 @@ bool BasicTask::CanAllocateResource() const
 std::unique_ptr<Task> BasicTask::Clone() const
 {
     return std::make_unique<BasicTask>(*this);
-}
-
-//-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       BasicTask::Print
-//【函数功能】       向输出流打印普通任务信息（类型名、名称、工期与调度时间）。
-//【参数】           Output（输出参数）：接收打印内容的输出流。
-//【返回值】         void，无返回值。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
-//-------------------------------------------------------------------------------------------------------------------
-void BasicTask::Print(std::ostream& Output) const
-{
-    PrintCommon(Output, "BasicTask");
 }

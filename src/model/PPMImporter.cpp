@@ -61,69 +61,49 @@ PPMImporter::~PPMImporter() = default;
 //-------------------------------------------------------------------------------------------------------------------
 Project PPMImporter::LoadFromStream(std::ifstream& Stream) const
 {
-    Project NewProject;                               //解析结果，逐行填充
-    std::map<int, std::size_t> TaskIdToIndex;         //文件任务 ID 到容器索引的映射
-    std::map<int, std::size_t> ResourceIdToIndex;     //文件资源 ID 到容器索引的映射
-    std::string Line;                                 //当前读到的一行原始文本
-    int LineNumber = 0;                               //当前行号，用于错误定位
-    std::string SeenGroups = "";                      //已出现过的区块组标识集合
-    char LastGroup = ' ';                             //上一内容行的区块组标识
+    Project NewProject;
+    std::map<int, std::size_t> TaskIdToIndex;
+    std::map<int, std::size_t> ResourceIdToIndex;
+    std::string Line;
+    int LineNumber = 0;
+    std::string SeenGroups = "";
+    char LastGroup = ' ';
 
     while (std::getline(Stream, Line)) {
         ++LineNumber;
-        Line = Trim(Line);                            //去除行首行尾空白
-        if (Line.empty() || (Line[0] == '#')) {       //空行与注释行直接跳过
+        Line = Trim(Line);
+        if (Line.empty() || (Line[0] == '#')) {
             continue;
         }
 
         std::istringstream LineStream(Line);
-        std::string Kind;                             //行首标识字母（P/T/M/R/D/A）
+        std::string Kind;
         LineStream >> Kind;
 
         try {
             if ((Kind != "P") && (Kind != "T") && (Kind != "M")
                 && (Kind != "R") && (Kind != "D") && (Kind != "A")) {
-                //无法识别的行首标识
                 throw std::invalid_argument("Unknown PPM line type.");
             }
-            char GroupChar = GroupOf(Kind);           //归并后的区块组标识
+            char GroupChar = GroupOf(Kind);
             CheckLineOrder(GroupChar, SeenGroups, LastGroup);
 
-            if (Kind == "P") {                        //项目名称行
-                ParseProjectLine(LineStream, NewProject);
-            }
-            else if ((Kind == "T") || (Kind == "M")) { //普通任务行或里程碑任务行
-                ParseTaskLine(Kind, LineStream, NewProject, TaskIdToIndex);
-            }
-            else if (Kind == "R") {                   //资源行
-                ParseResourceLine(LineStream, NewProject, ResourceIdToIndex);
-            }
-            else if (Kind == "D") {                   //依赖关系行
-                ParseDependencyLine(LineStream, NewProject, TaskIdToIndex);
-            }
-            else {                                    //资源分配行
-                ParseAllocationLine(LineStream, NewProject,
-                                    TaskIdToIndex, ResourceIdToIndex);
-            }
+            DispatchLineParsing(Kind, LineStream, NewProject,
+                              TaskIdToIndex, ResourceIdToIndex);
 
-            if (SeenGroups.find(GroupChar) == std::string::npos) {
-                SeenGroups += GroupChar;              //登记该区块组已出现
-            }
-            LastGroup = GroupChar;
+            UpdateSeenGroups(GroupChar, SeenGroups, LastGroup);
         }
-        catch (const std::exception& Exception) {     //统一补充行号后重新抛出
-            throw std::runtime_error(
-                "PPM parse error at line " + std::to_string(LineNumber)
-                + ": " + Exception.what());
+        catch (const std::exception& Exception) {
+            HandleLineError(LineNumber, Kind, Exception);
         }
     }
 
-    if (SeenGroups.find('P') == std::string::npos) {  //P 行有且仅有一行，不可缺失
+    if (SeenGroups.find('P') == std::string::npos) {
         throw std::runtime_error(
             "PPM parse error: project line is missing.");
     }
 
-    NewProject.RebuildTaskRelations();                //按依赖表重建各任务的前驱后继缓存
+    NewProject.RebuildTaskRelations();
     return NewProject;
 }
 
@@ -220,8 +200,9 @@ void PPMImporter::ParseProjectLine(std::istringstream& LineStream,
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       PPMImporter::ParseTaskLine（静态）
 //【函数功能】       解析 T/M 行：读取任务 ID 与名称；T 行必须带正整数工期，M 行工期可
-//                   省略、写出时必须为 0；ID 不可重复；工期 0 一律创建里程碑任务，否则
-//                   创建普通任务，并登记文件 ID 到容器索引的映射。
+//                   省略，也可按官方样例显式写 0，但其他任意字段均非法；ID 不可
+//                   重复；工期 0 一律创建里程碑任务，否则创建普通任务，并登记文件
+//                   ID 到容器索引的映射。
 //【参数】           Kind（输入参数）：行首标识（"T" 或 "M"）；
 //                   LineStream（输入参数）：定位到 ID 字段前的行内容流；
 //                   TargetProject（输出参数）：被添加任务的项目对象；
@@ -248,10 +229,22 @@ void PPMImporter::ParseTaskLine(const std::string& Kind,
         if (!(LineStream >> Duration)) {
             throw std::invalid_argument("Task duration missing.");
         }
+        if (Duration <= 0) {
+            throw std::invalid_argument("Task duration must be positive.");
+        }
     }
-    else if ((LineStream >> Duration) && (Duration != 0)) {
-        //里程碑行若写了工期，则必须为 0
-        throw std::invalid_argument("Milestone duration must be 0.");
+    else {
+        std::string DurationText;
+        if (LineStream >> DurationText) {
+            std::istringstream DurationStream(DurationText);
+            char RemainingChar = '\0';
+            if (!(DurationStream >> Duration)
+                || (DurationStream >> RemainingChar)
+                || (Duration != 0)) {
+                //里程碑行若显式写工期，则必须是整数 0
+                throw std::invalid_argument("Milestone duration must be 0.");
+            }
+        }
     }
     std::string ExtraField;
     if (LineStream >> ExtraField) {                   //检查是否有多余字段
@@ -261,7 +254,7 @@ void PPMImporter::ParseTaskLine(const std::string& Kind,
         throw std::invalid_argument("Duplicate task ID.");
     }
     std::size_t Index = 0;                            //新任务在容器中的索引
-    if ((Kind == "M") || (Duration == 0)) {           //工期为 0 一律按里程碑创建
+    if (Kind == "M") {                                //里程碑行创建里程碑任务
         Index = TargetProject.AddMilestoneTask(Name);
     }
     else {
@@ -403,6 +396,79 @@ void PPMImporter::ParseAllocationLine(
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       PPMImporter::HandleLineError（静态）
+//【函数功能】       处理解析异常：将行号与原始异常信息整合后重新抛出 std::runtime_error。
+//【参数】           LineNumber（输入参数）：出错的行号；
+//                   Kind（输入参数）：行首标识；
+//                   Exception（输入参数）：原始异常对象。
+//【返回值】         void，无返回值；总是抛出异常。
+//【开发者及日期】   2024013215, 2026-07-08
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void PPMImporter::HandleLineError(int LineNumber,
+                                  const std::string& /* Kind */,
+                                  const std::exception& Exception)
+{
+    throw std::runtime_error(
+        "PPM parse error at line " + std::to_string(LineNumber)
+        + ": " + Exception.what());
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       PPMImporter::DispatchLineParsing（静态）
+//【函数功能】       按行首标识分发行解析：根据 Kind 值调用对应的解析函数（P/T/M/R/D/A）。
+//【参数】           Kind（输入参数）：行首标识；
+//                   LineStream（输入参数）：定位到字段起始的行内容流；
+//                   NewProject（输入/输出参数）：被填充的项目对象；
+//                   TaskIdToIndex（输入/输出参数）：任务 ID 映射表；
+//                   ResourceIdToIndex（输入/输出参数）：资源 ID 映射表。
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-08
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void PPMImporter::DispatchLineParsing(
+    const std::string& Kind, std::istringstream& LineStream,
+    Project& NewProject, std::map<int, std::size_t>& TaskIdToIndex,
+    std::map<int, std::size_t>& ResourceIdToIndex)
+{
+    if (Kind == "P") {
+        ParseProjectLine(LineStream, NewProject);
+    }
+    else if ((Kind == "T") || (Kind == "M")) {
+        ParseTaskLine(Kind, LineStream, NewProject, TaskIdToIndex);
+    }
+    else if (Kind == "R") {
+        ParseResourceLine(LineStream, NewProject, ResourceIdToIndex);
+    }
+    else if (Kind == "D") {
+        ParseDependencyLine(LineStream, NewProject, TaskIdToIndex);
+    }
+    else {
+        ParseAllocationLine(LineStream, NewProject,
+                          TaskIdToIndex, ResourceIdToIndex);
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       PPMImporter::UpdateSeenGroups（静态）
+//【函数功能】       更新已见区块集合：将当前区块标识加入 SeenGroups，并更新 LastGroup。
+//【参数】           GroupChar（输入参数）：当前行的区块组标识；
+//                   SeenGroups（输入/输出参数）：已出现过的区块组标识集合；
+//                   LastGroup（输入/输出参数）：上一内容行的区块组标识。
+//【返回值】         void，无返回值。
+//【开发者及日期】   2024013215, 2026-07-08
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+void PPMImporter::UpdateSeenGroups(char GroupChar, std::string& SeenGroups,
+                                   char& LastGroup)
+{
+    if (SeenGroups.find(GroupChar) == std::string::npos) {
+        SeenGroups += GroupChar;
+    }
+    LastGroup = GroupChar;
+}
+
 std::string PPMImporter::Trim(const std::string& Text)
 {
     std::size_t Head = 0;                             //首个非空白字符的位置

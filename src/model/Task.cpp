@@ -14,8 +14,6 @@
 #include <cctype>
 //std::find_if、std::remove_if 所属头文件
 #include <algorithm>
-//std::ostream 所属头文件
-#include <iostream>
 //std::invalid_argument、std::logic_error、std::out_of_range 所属头文件
 #include <stdexcept>
 
@@ -160,7 +158,7 @@ void Task::SetName(const std::string& Name)
 //-------------------------------------------------------------------------------------------------------------------
 void Task::AddResource(std::size_t ResourceIndex, int Quantity)
 {
-    if (!CanAllocateResource()) {                     //里程碑等任务类型不可占用资源
+    if (!IsResourceAllocatable()) {                   //里程碑等任务类型不可占用资源
         throw std::logic_error("This task cannot allocate resources.");
     }
     if (Quantity <= 0) {
@@ -389,7 +387,8 @@ int Task::GetSlack() const
 //-------------------------------------------------------------------------------------------------------------------
 bool Task::IsCritical() const
 {
-    return (m_iEarlyFinish == m_iLateFinish) || (m_iEarlyStart == m_iLateStart);
+    return (m_iEarlyStart == m_iLateStart)
+        && (m_iEarlyFinish == m_iLateFinish);
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -413,24 +412,4 @@ double Task::CalculateTotalCost(const std::vector<Resource>& Resources) const
             GetDuration());
     }
     return TotalCost;
-}
-
-//-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       Task::PrintCommon
-//【函数功能】       向输出流打印任务的公共字段：类型名、任务名、工期与全部调度时间。
-//【参数】           Output（输出参数）：接收打印内容的输出流；
-//                   TypeName（输入参数）：任务类型名文本，由派生类给定。
-//【返回值】         void，无返回值。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
-//-------------------------------------------------------------------------------------------------------------------
-void Task::PrintCommon(std::ostream& Output, const std::string& TypeName) const
-{
-    Output << TypeName << " " << m_Name
-           << " Duration=" << GetDuration()
-           << " ES=" << m_iEarlyStart
-           << " EF=" << m_iEarlyFinish
-           << " LS=" << m_iLateStart
-           << " LF=" << m_iLateFinish
-           << " Slack=" << m_iSlack;
 }

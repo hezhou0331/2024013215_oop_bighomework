@@ -164,8 +164,8 @@ double Resource::CalculateCost(int Quantity, int Duration) const
     if (Quantity <= 0) {                              //占用数量必须为正
         throw std::invalid_argument("Resource quantity must be positive.");
     }
-    if (Duration < 0) {                               //工期不允许为负
-        throw std::invalid_argument("Duration cannot be negative.");
+    if (Duration <= 0) {                              //工期必须为正
+        throw std::invalid_argument("Duration must be positive.");
     }
     return m_rUnitCost * Quantity * Duration;
 }

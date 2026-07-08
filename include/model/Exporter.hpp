@@ -5,8 +5,8 @@
 //【开发者及日期】           2024013215, 2026-07-07
 //【更改记录】               2026-07-07 由非模板抽象基类重构为类模板，增加扩展名注册工厂。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_EXPORTER_HPP
-#define PROJECT_SCHEDULER_EXPORTER_HPP
+#ifndef EXPORTER_HPP
+#define EXPORTER_HPP
 
 //FilePorter 基类模板所属头文件
 #include "model/FilePorter.hpp"
@@ -32,7 +32,7 @@
 //                     Register<DERIVED> 注册一种具体导出器（扩展名不可重复）；静态
 //                     GetInstanceByFileName/GetInstanceByExtName 按文件名/扩展名查找已注册
 //                     导出器实例指针，未注册抛出 INVALID_FILE_TYPE；构造函数受保护，禁止
-//                     拷贝与赋值；ExtName 为扩展名的公有常引用（只读）。
+//                     拷贝与赋值；GetSupportedExtName 只读返回所支持扩展名。
 //【开发者及日期】     2024013215, 2026-07-07
 //【更改记录】         2026-07-07 由非模板抽象基类重构为类模板，增加扩展名注册工厂。
 //-------------------------------------------------------------------------------------------------------------------
@@ -57,6 +57,8 @@ public:
     // 把 T 类型对象写入已打开的文件流，由具体格式派生类实现
     virtual void SaveToStream(std::ofstream& Stream,
                               const T& SourceObject) const = 0;
+    // 返回本导出器支持的文件扩展名（不含 '.'）
+    const std::string& GetSupportedExtName() const;
 
     //-----------------------------------------------------------------------------------------------------------
     //静态工厂成员函数
@@ -86,12 +88,6 @@ private:
 
     //所有已注册导出器实例指针的列表（静态工厂的登记表）
     static std::vector<std::shared_ptr<Exporter<T>>> m_pExporters;
-
-public:
-    //-----------------------------------------------------------------------------------------------------------
-    //公有常引用数据成员（只读访问，无写规则）
-    //-----------------------------------------------------------------------------------------------------------
-    const std::string& ExtName{m_ExtName};    //本导出器支持的文件扩展名（只读）
 };
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -130,6 +126,20 @@ Exporter<T>::Exporter(const std::string& FileExtName)
 //-------------------------------------------------------------------------------------------------------------------
 template<class T>
 Exporter<T>::~Exporter() = default;
+
+//-------------------------------------------------------------------------------------------------------------------
+//【函数名称】       Exporter::GetSupportedExtName
+//【函数功能】       读取本导出器支持的文件扩展名。
+//【参数】           无
+//【返回值】         const std::string&，本导出器支持的文件扩展名（不含 '.'）。
+//【开发者及日期】   2024013215, 2026-07-07
+//【更改记录】
+//-------------------------------------------------------------------------------------------------------------------
+template<class T>
+const std::string& Exporter<T>::GetSupportedExtName() const
+{
+    return m_ExtName;
+}
 
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       Exporter::SaveToFile
@@ -171,9 +181,9 @@ void Exporter<T>::Register()
         = std::make_shared<DERIVED>();
     //扩展名查重（不区分大小写），同一扩展名只允许一个导出器
     for (const std::shared_ptr<Exporter<T>>& pExporter : m_pExporters) {
-        if (ToUpperCopy(pExporter->ExtName)
-            == ToUpperCopy(pDerivedExporter->ExtName)) {
-            throw INVALID_FILE_TYPE(pDerivedExporter->ExtName);
+        if (ToUpperCopy(pExporter->GetSupportedExtName())
+            == ToUpperCopy(pDerivedExporter->GetSupportedExtName())) {
+            throw INVALID_FILE_TYPE(pDerivedExporter->GetSupportedExtName());
         }
     }
     m_pExporters.push_back(pDerivedExporter);
@@ -210,7 +220,8 @@ std::shared_ptr<Exporter<T>> Exporter<T>::GetInstanceByExtName(
 {
     //遍历登记表，扩展名比较不区分大小写
     for (const std::shared_ptr<Exporter<T>>& pExporter : m_pExporters) {
-        if (ToUpperCopy(pExporter->ExtName) == ToUpperCopy(FileExtName)) {
+        if (ToUpperCopy(pExporter->GetSupportedExtName())
+            == ToUpperCopy(FileExtName)) {
             return pExporter;
         }
     }

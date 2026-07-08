@@ -4,14 +4,12 @@
 //【开发者及日期】           2024013215, 2026-07-05
 //【更改记录】               2026-07-05 按课程 C++ 编码规范 V1.3 修订注释格式并重命名调度时间成员。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_TASK_HPP
-#define PROJECT_SCHEDULER_TASK_HPP
+#ifndef TASK_HPP
+#define TASK_HPP
 
 //ResourceAllocation 资源分配记录类所属头文件
 #include "model/ResourceAllocation.hpp"
 
-//std::ostream 前置声明所属头文件
-#include <iosfwd>
 //std::unique_ptr 所属头文件
 #include <memory>
 //std::string 所属头文件
@@ -28,8 +26,8 @@ class Resource;
 //                     以及关键路径法（CPM）调度时间（最早/最晚开始与结束、时差），
 //                     由 BasicTask 与 MilestoneTask 派生出具体任务类型。
 //【接口说明】         GetName/SetName 读写任务名称（不允许为空）；GetDuration、
-//                     CanAllocateResource、Clone、Print 为纯虚函数，由派生类给出
-//                     工期、能否占资源、多态复制与打印的具体行为；AddResource/
+//                     IsResourceAllocatable、Clone 为纯虚函数，由派生类给出
+//                     工期、能否占资源与多态复制的具体行为；AddResource/
 //                     RemoveResource/ClearResources/GetResources 维护资源分配；
 //                     SetPredecessors/SetSuccessors 及对应 Get 维护依赖索引；
 //                     SetSchedule/ClearSchedule 与 GetES/GetEF/GetLS/GetLF/GetSlack/
@@ -65,11 +63,9 @@ public:
     // 纯虚函数：返回任务工期（天），由派生类实现
     virtual int GetDuration() const = 0;
     // 纯虚函数：判断该任务能否占用资源，由派生类实现
-    virtual bool CanAllocateResource() const = 0;
+    virtual bool IsResourceAllocatable() const = 0;
     // 纯虚函数：多态复制，返回自身的深拷贝
     virtual std::unique_ptr<Task> Clone() const = 0;
-    // 纯虚函数：向给定输出流打印任务信息
-    virtual void Print(std::ostream& Output) const = 0;
 
     //-----------------------------------------------------------------------------------------------------------
     //资源分配与成本计算
@@ -127,9 +123,6 @@ protected:
     Task();
     // 带参构造函数：以名称构造任务，名称为空时抛出异常
     explicit Task(const std::string& Name);
-
-    // 向输出流打印任务的公共字段（类型、名称、工期与调度时间）
-    void PrintCommon(std::ostream& Output, const std::string& TypeName) const;
 
 private:
     //-----------------------------------------------------------------------------------------------------------

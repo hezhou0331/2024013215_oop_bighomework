@@ -4,8 +4,8 @@
 //【开发者及日期】           2024013215, 2026-07-05
 //【更改记录】               2026-07-07 基类重构为 Exporter<Project> 模板，改为实现流写出接口。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_PPM_EXPORTER_HPP
-#define PROJECT_SCHEDULER_PPM_EXPORTER_HPP
+#ifndef PPM_EXPORTER_HPP
+#define PPM_EXPORTER_HPP
 
 //Exporter 基类模板所属头文件
 #include "model/Exporter.hpp"

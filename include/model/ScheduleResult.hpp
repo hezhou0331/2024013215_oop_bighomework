@@ -5,8 +5,8 @@
 //【开发者及日期】           2024013215, 2026-07-05
 //【更改记录】               2026-07-05 按课程 C++ 编码规范 V1.3 修订注释与标识符命名。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_SCHEDULE_RESULT_HPP
-#define PROJECT_SCHEDULER_SCHEDULE_RESULT_HPP
+#ifndef SCHEDULE_RESULT_HPP
+#define SCHEDULE_RESULT_HPP
 
 //TaskScheduleInfo 任务时间参数类所属头文件
 #include "model/TaskScheduleInfo.hpp"

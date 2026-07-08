@@ -4,8 +4,8 @@
 //【开发者及日期】           2024013215, 2026-07-05
 //【更改记录】               2026-07-05 按课程 C++ 编码规范 V1.3 修订注释与标识符命名。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_PROJECT_REPOSITORY_HPP
-#define PROJECT_SCHEDULER_PROJECT_REPOSITORY_HPP
+#ifndef PROJECT_REPOSITORY_HPP
+#define PROJECT_REPOSITORY_HPP
 
 //Project 项目模型类所属头文件
 #include "model/Project.hpp"

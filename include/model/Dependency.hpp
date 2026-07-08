@@ -6,8 +6,8 @@
 //【更改记录】               2026-07-05 按课程 C++ 编码规范 V1.3 修订注释与标识符命名。
 //                           2026-07-07 依赖类型枚举内嵌入类，满足一个头文件一个类的组织要求。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_DEPENDENCY_HPP
-#define PROJECT_SCHEDULER_DEPENDENCY_HPP
+#ifndef DEPENDENCY_HPP
+#define DEPENDENCY_HPP
 
 //std::size_t 所属头文件
 #include <cstddef>
@@ -23,7 +23,7 @@ class Task;
 //                     天数（Lag，可为负表示提前），并提供 CPM 计算所需的时间换算。
 //【接口说明】         内嵌枚举 Type 表示 FS/SS/FF/SF 四种依赖类型；构造时给定前置、
 //                     后置、类型与 Lag（禁止自依赖）；Get 系列读取各字段；
-//                     IsSelfDependency / InvolvesTask / Matches / IsValidForTaskCount
+//                     IsSelfDependency / HasTask / HasEndpoints / IsValidForTaskCount
 //                     用于合法性与匹配判断；GetSuccessorEarliestStart /
 //                     GetPredecessorLatestStart 按依赖类型换算 CPM 正推、逆推的时间
 //                     约束；TypeFromText / TypeToText 完成类型与 "FS"/"SS"/"FF"/"SF"
@@ -79,9 +79,9 @@ public:
     // 判断是否为自依赖（前置与后置为同一任务）
     bool IsSelfDependency() const;
     // 判断给定任务是否作为前置或后置参与本依赖
-    bool InvolvesTask(std::size_t TaskIndex) const;
+    bool HasTask(std::size_t TaskIndex) const;
     // 判断本依赖是否恰好连接给定的前置、后置任务对
-    bool Matches(std::size_t Predecessor, std::size_t Successor) const;
+    bool HasEndpoints(std::size_t Predecessor, std::size_t Successor) const;
     // 判断前置、后置下标是否均在任务总数范围内且非自依赖
     bool IsValidForTaskCount(std::size_t TaskCount) const;
 
@@ -114,4 +114,3 @@ private:
 };
 
 #endif
-

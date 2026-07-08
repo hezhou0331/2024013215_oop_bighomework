@@ -82,8 +82,20 @@ ValidationResult ProjectValidator::Validate(const Project& SourceProject) const
         }
     }
 
-    if (!IsDag(SourceProject)) {                      //依赖图必须无环
+    std::vector<std::size_t> TopologicalOrder
+        = GetTopologicalOrder(SourceProject);
+    if (TopologicalOrder.size() != TaskCount) {       //依赖图必须无环
         Result.AddError("Dependency graph has a cycle.");
+        std::vector<bool> IsInTopologicalOrder(TaskCount, false);
+        for (std::size_t Index : TopologicalOrder) {
+            IsInTopologicalOrder[Index] = true;
+        }
+        for (std::size_t Index = 0; Index < TaskCount; ++Index) {
+            if (!IsInTopologicalOrder[Index]) {
+                Result.AddError("Task " + std::to_string(Index)
+                    + " is in or blocked by a cycle.");
+            }
+        }
     }
 
     //统计每个任务的入度与出度，用于孤立任务检查
@@ -91,9 +103,17 @@ ValidationResult ProjectValidator::Validate(const Project& SourceProject) const
         = BuildAdjacency(SourceProject);
     std::vector<int> Indegrees = BuildIndegrees(SourceProject);
     std::vector<int> Outdegrees(TaskCount, 0);        //每个任务的直接后继个数
+    bool HasStart = false;                            //是否存在入度为 0 的起始任务
+    bool HasEnd = false;                              //是否存在出度为 0 的结束任务
 
     for (std::size_t Index = 0; Index < TaskCount; ++Index) {
         Outdegrees[Index] = static_cast<int>(Adjacency[Index].size());
+        if (Indegrees[Index] == 0) {
+            HasStart = true;
+        }
+        if (Outdegrees[Index] == 0) {
+            HasEnd = true;
+        }
     }
 
     if (TaskCount > 1) {                              //多任务项目才检查孤立任务
@@ -106,8 +126,12 @@ ValidationResult ProjectValidator::Validate(const Project& SourceProject) const
         }
     }
 
-    if (!HasProperStartEnd(SourceProject)) {          //必须同时存在起始与结束任务
-        Result.AddError("Project must have at least one start and one end.");
+    if (!HasStart) {                                  //至少存在一个起始任务
+        Result.AddError("Project must have at least one start task.");
+    }
+
+    if (!HasEnd) {                                    //至少存在一个结束任务
+        Result.AddError("Project must have at least one end task.");
     }
 
     if (!HasReachableNodes(SourceProject)) {          //所有任务都要在起止路径上
@@ -199,13 +223,13 @@ bool ProjectValidator::HasReachableNodes(const Project& SourceProject) const
         Outdegrees[Index] = static_cast<int>(Adjacency[Index].size());
     }
 
-    std::vector<bool> ReachableFromStart(TaskCount, false); //起始任务正向可达标记
+    std::vector<bool> IsReachableFromStart(TaskCount, false); //起始任务正向可达标记
     std::queue<std::size_t> Pending;                  //BFS 待扩展的任务队列
     //所有入度为 0 的任务都是起始任务，作为正向 BFS 的源点
     for (std::size_t Index = 0; Index < TaskCount; ++Index) {
         if (Indegrees[Index] == 0) {
             Pending.push(Index);
-            ReachableFromStart[Index] = true;
+            IsReachableFromStart[Index] = true;
         }
     }
     //正向 BFS：沿后继方向扩展起始任务的可达集合
@@ -213,19 +237,19 @@ bool ProjectValidator::HasReachableNodes(const Project& SourceProject) const
         std::size_t Current = Pending.front();
         Pending.pop();
         for (std::size_t Next : Adjacency[Current]) {
-            if (!ReachableFromStart[Next]) {
-                ReachableFromStart[Next] = true;
+            if (!IsReachableFromStart[Next]) {
+                IsReachableFromStart[Next] = true;
                 Pending.push(Next);
             }
         }
     }
 
-    std::vector<bool> CanReachEnd(TaskCount, false);  //能到达结束任务的标记
+    std::vector<bool> HasPathToEnd(TaskCount, false); //能到达结束任务的标记
     //所有出度为 0 的任务都是结束任务，作为反向 BFS 的源点
     for (std::size_t Index = 0; Index < TaskCount; ++Index) {
         if (Outdegrees[Index] == 0) {
             Pending.push(Index);
-            CanReachEnd[Index] = true;
+            HasPathToEnd[Index] = true;
         }
     }
     //反向 BFS：沿前驱方向扩展能到达结束任务的集合
@@ -233,8 +257,8 @@ bool ProjectValidator::HasReachableNodes(const Project& SourceProject) const
         std::size_t Current = Pending.front();
         Pending.pop();
         for (std::size_t Previous : ReverseAdjacency[Current]) {
-            if (!CanReachEnd[Previous]) {
-                CanReachEnd[Previous] = true;
+            if (!HasPathToEnd[Previous]) {
+                HasPathToEnd[Previous] = true;
                 Pending.push(Previous);
             }
         }
@@ -242,40 +266,12 @@ bool ProjectValidator::HasReachableNodes(const Project& SourceProject) const
 
     //每个任务都必须既能从起点到达、又能到达终点
     for (std::size_t Index = 0; Index < TaskCount; ++Index) {
-        if (!ReachableFromStart[Index] || !CanReachEnd[Index]) {
+        if (!IsReachableFromStart[Index] || !HasPathToEnd[Index]) {
             return false;
         }
     }
 
     return true;
-}
-
-//-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       ProjectValidator::HasProperStartEnd
-//【函数功能】       判断项目是否同时存在起始任务（入度为 0）与结束任务（出度为 0）。
-//【参数】           SourceProject（输入参数）：待检查的项目模型。
-//【返回值】         bool，同时存在起始与结束任务返回 true，否则返回 false。
-//【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】
-//-------------------------------------------------------------------------------------------------------------------
-bool ProjectValidator::HasProperStartEnd(const Project& SourceProject) const
-{
-    std::vector<int> Indegrees = BuildIndegrees(SourceProject);
-    std::vector<std::vector<std::size_t>> Adjacency
-        = BuildAdjacency(SourceProject);
-    bool HasStart = false;                            //是否存在入度为 0 的起始任务
-    bool HasEnd = false;                              //是否存在出度为 0 的结束任务
-
-    for (std::size_t Index = 0; Index < SourceProject.GetTaskCount();
-         ++Index) {
-        if (Indegrees[Index] == 0) {                  //无前驱即起始任务
-            HasStart = true;
-        }
-        if (Adjacency[Index].empty()) {               //无后继即结束任务
-            HasEnd = true;
-        }
-    }
-    return HasStart && HasEnd;
 }
 
 //-------------------------------------------------------------------------------------------------------------------

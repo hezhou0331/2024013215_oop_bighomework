@@ -1,0 +1,7 @@
+# Invalid project: milestone duration token must be integer zero
+P MilestoneBadDurationToken
+
+T 1 Task1 2
+M 2 Milestone abc
+
+D 1 2 FS 0

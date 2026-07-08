@@ -1,10 +1,12 @@
 //-------------------------------------------------------------------------------------------------------------------
 //【文件名】                 ProjectController.cpp
-//【功能模块和目的】         实现项目调度器的控制器单例类：接收界面命令，调用模型层完成
-//                           项目、任务、依赖与资源的管理及校验调度，以状态枚举与信息类
-//                           回传结果，不做任何文本格式化。
+//【功能模块和目的】         实现项目调度器的控制器单例类
+//                           接收界面命令，调用模型层完成
+//                           项目、任务、依赖与资源的管理及校验调度
+//                           以状态枚举与信息类回传结果，不做任何文本格式化
 //【开发者及日期】           2024013215, 2026-07-05
-//【更改记录】               2026-07-07 重构为"状态枚举 + 信息类"接口，文本格式化移交界面层。
+//【更改记录】               2026-07-07 重构为状态枚举+信息类接口
+//                           文本格式化移交界面层
 //-------------------------------------------------------------------------------------------------------------------
 #include "controller/ProjectController.hpp"
 
@@ -26,26 +28,29 @@
 
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectController::GetInstance
-//【函数功能】       获取控制器的全局唯一实例；首次调用时构造函数内静态对象，之后始终返回同一对象。
+//【函数功能】       获取控制器的全局唯一实例
+//                   首次调用时构造函数内静态对象，之后始终返回同一对象
 //【参数】           无
-//【返回值】         ProjectController&，控制器单例的引用。
+//【返回值】         ProjectController&，控制器单例的引用
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController& ProjectController::GetInstance()
 {
-    static ProjectController s_Instance;    //函数内静态对象，首次调用时构造且全程唯一
+    // 函数内静态对象，首次调用时构造且全程唯一
+    static ProjectController s_Instance;
     return s_Instance;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectController::ProjectController
-//【函数功能】       默认构造控制器对象，并向导入/导出器工厂注册 PPM 格式的具体实现；
-//                   后续如需支持更多格式，仅需在此追加注册。
+//【函数功能】       默认构造控制器对象
+//                   向导入/导出器工厂注册PPM格式的具体实现
+//                   后续如需支持更多格式，仅需在此追加注册
 //【参数】           无
-//【返回值】         构造函数无返回值。
+//【返回值】         构造函数无返回值
 //【开发者及日期】   2024013215, 2026-07-05
-//【更改记录】       2026-07-07 增加 PPM 导入/导出器的工厂注册。
+//【更改记录】       2026-07-07 增加PPM导入/导出器的工厂注册
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ProjectController()
     : m_Repository(), m_LastError("")
@@ -56,44 +61,27 @@ ProjectController::ProjectController()
 
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectController::~ProjectController
-//【函数功能】       析构控制器对象；成员仓库由其自身析构函数清理，无需额外处理。
+//【函数功能】       析构控制器对象
+//                   成员仓库由其自身析构函数清理，无需额外处理
 //【参数】           无
-//【返回值】         析构函数无返回值。
+//【返回值】         析构函数无返回值
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::~ProjectController() = default;
 
 //-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       ProjectController::ResultToText（静态）
-//【函数功能】       把返回状态枚举翻译为英文描述文本，供界面层向用户显示。
-//【参数】           Result（输入参数）：待翻译的返回状态枚举值。
-//【返回值】         std::string，对应的英文描述文本。
+//【函数名称】       ProjectController::GetLastError
+//【函数功能】       读取最近一次失败操作的详细错误信息
+//                   供界面层输出给用户
+//【参数】           无
+//【返回值】         const std::string&，最近一次失败操作的详细错误信息。
 //【开发者及日期】   2024013215, 2026-07-07
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
-std::string ProjectController::ResultToText(RES Result)
+const std::string& ProjectController::GetLastError() const
 {
-    switch (Result) {
-    case RES::SUCCESS :                        //操作成功
-        return "Operation completed successfully.";
-    case RES::INVALID_ARGUMENT :               //参数被模型层拒绝
-        return "Invalid argument rejected by the model.";
-    case RES::INDEX_OUT_OF_RANGE :             //索引越界
-        return "Index out of range.";
-    case RES::SELF_DEPENDENCY :                //自依赖
-        return "Self-dependency is not allowed.";
-    case RES::CYCLE_DETECTED :                 //将导致循环依赖
-        return "Dependency would create a cycle.";
-    case RES::FILE_ERROR :                     //文件类型不支持或无法打开
-        return "File cannot be opened or its type is not supported.";
-    case RES::PARSE_ERROR :                    //文件内容格式非法
-        return "File content is malformed.";
-    case RES::INVALID_PROJECT :                //项目不合理，无法调度
-        return "Cannot schedule an invalid project.";
-    default :                                  //其余取值一律视为未知错误
-        return "Unknown error.";
-    }
+    return m_LastError;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -296,18 +284,18 @@ ProjectController::TaskInfo ProjectController::BuildTaskInfo(
 {
     const Task& CurrentTask = SourceProject.GetTask(Index);
     TaskInfo Info;
-    Info.Index = Index;
-    Info.Name = CurrentTask.GetName();
-    Info.Duration = CurrentTask.GetDuration();
-    Info.IsMilestone = (CurrentTask.GetDuration() == 0);
-    Info.TotalCost = SourceProject.GetTaskTotalCost(Index);
-    Info.EarlyStart = CurrentTask.GetES();
-    Info.EarlyFinish = CurrentTask.GetEF();
-    Info.LateStart = CurrentTask.GetLS();
-    Info.LateFinish = CurrentTask.GetLF();
-    Info.SlackDays = CurrentTask.GetSlack();
-    Info.Predecessors = CurrentTask.GetPredecessors();
-    Info.Successors = CurrentTask.GetSuccessors();
+    Info.SetIndex(Index);
+    Info.SetName(CurrentTask.GetName());
+    Info.SetDuration(CurrentTask.GetDuration());
+    Info.SetMilestone(CurrentTask.GetDuration() == 0);
+    Info.SetTotalCost(SourceProject.GetTaskTotalCost(Index));
+    Info.SetEarlyStart(CurrentTask.GetES());
+    Info.SetEarlyFinish(CurrentTask.GetEF());
+    Info.SetLateStart(CurrentTask.GetLS());
+    Info.SetLateFinish(CurrentTask.GetLF());
+    Info.SetSlackDays(CurrentTask.GetSlack());
+    Info.SetPredecessors(CurrentTask.GetPredecessors());
+    Info.SetSuccessors(CurrentTask.GetSuccessors());
     return Info;
 }
 
@@ -404,6 +392,11 @@ ProjectController::RES ProjectController::AddDependency(
             return RES::SELF_DEPENDENCY;
         }
         Project& TargetProject = m_Repository.GetCurrentProject();
+        if ((Predecessor >= TargetProject.GetTaskCount())
+            || (Successor >= TargetProject.GetTaskCount())) {
+            m_LastError = "Task index is out of range.";
+            return RES::INDEX_OUT_OF_RANGE;
+        }
         Project CopyProject(TargetProject);             //在副本上试加依赖，校验通过后再提交
         CopyProject.AddDependency(
             Dependency(Predecessor,
@@ -475,6 +468,10 @@ ProjectController::RES ProjectController::RemoveDependency(std::size_t Predecess
         m_Repository.GetCurrentProject().RemoveDependency(Predecessor, Successor);
         return RES::SUCCESS;
     }
+    catch (const std::out_of_range& Exception) {        //索引越界
+        m_LastError = Exception.what();
+        return RES::INDEX_OUT_OF_RANGE;
+    }
     catch (const std::invalid_argument& Exception) {    //依赖不存在
         m_LastError = Exception.what();
         return RES::INVALID_ARGUMENT;
@@ -504,10 +501,10 @@ ProjectController::RES ProjectController::GetDependencyList(
         const Dependency& CurrentDependency
             = CurrentProject.GetDependency(Index);
         DependencyInfo Info;
-        Info.Predecessor = CurrentDependency.GetPredecessor();
-        Info.Successor = CurrentDependency.GetSuccessor();
-        Info.TypeText = CurrentDependency.GetTypeText();
-        Info.LagDays = CurrentDependency.GetLag();
+        Info.SetPredecessor(CurrentDependency.GetPredecessor());
+        Info.SetSuccessor(CurrentDependency.GetSuccessor());
+        Info.SetTypeText(CurrentDependency.GetTypeText());
+        Info.SetLagDays(CurrentDependency.GetLag());
         InfoList.push_back(Info);
     }
     return RES::SUCCESS;
@@ -601,8 +598,8 @@ ProjectController::RES ProjectController::GetResourceList(
          ++Index) {
         const Resource& CurrentResource = CurrentProject.GetResource(Index);
         ResourceInfo Info;
-        Info.Name = CurrentResource.GetName();
-        Info.UnitCost = CurrentResource.GetUnitCost();
+        Info.SetName(CurrentResource.GetName());
+        Info.SetUnitCost(CurrentResource.GetUnitCost());
         InfoList.push_back(Info);
     }
     return RES::SUCCESS;
@@ -613,7 +610,7 @@ ProjectController::RES ProjectController::GetResourceList(
 //【函数功能】       调用校验器检查当前项目是否满足调度规则（依赖无环、无孤立悬挂节点、
 //                   依赖引用有效），结论与逐条错误信息写入输出参数。
 //【参数】           Info（输出参数）：填充校验结论与错误信息。
-//【返回值】         RES，恒为 SUCCESS（校验结论在 Info.IsValid 中）。
+//【返回值】         RES，恒为 SUCCESS（校验结论在 Info.IsValid() 中）。
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】       2026-07-07 改为回传信息类。
 //-------------------------------------------------------------------------------------------------------------------
@@ -623,8 +620,8 @@ ProjectController::RES ProjectController::ValidateProject(
     ProjectValidator Validator;    //校验器无内部状态，按需临时创建
     ValidationResult Result = Validator.Validate(
         m_Repository.GetCurrentProject());
-    Info.IsValid = Result.IsValid();
-    Info.Messages = Result.GetMessages();
+    Info.SetValid(Result.IsValid());
+    Info.SetMessages(Result.GetMessages());
     return RES::SUCCESS;
 }
 
@@ -645,8 +642,8 @@ ProjectController::RES ProjectController::RunSchedule(ScheduleInfo& Info)
         CPMScheduler Scheduler;    //调度器无内部状态，按需临时创建
         ScheduleResult Result = Scheduler.Calculate(
             m_Repository.GetCurrentProject());
-        Info.ProjectDuration = Result.GetProjectDuration();
-        Info.CriticalPath = Result.GetCriticalPath();
+        Info.SetProjectDuration(Result.GetProjectDuration());
+        Info.SetCriticalPath(Result.GetCriticalPath());
         return RES::SUCCESS;
     }
     catch (const std::logic_error& Exception) {         //项目未通过合理性校验
@@ -673,12 +670,15 @@ ProjectController::RES ProjectController::CollectStatistics(
     StatisticsInfo& Info)
 {
     const Project& CurrentProject = m_Repository.GetCurrentProject();
-    Info.ProjectName = CurrentProject.GetName();
-    Info.TaskCount = CurrentProject.GetTaskCount();
-    Info.DependencyCount = CurrentProject.GetDependencyCount();
-    Info.ResourceCount = CurrentProject.GetResourceCount();
-    Info.TotalCost = CurrentProject.GetProjectTotalCost();
-    return RunSchedule(Info.Schedule);    //统计附带一次调度计算，返回其结果状态
+    Info.SetProjectName(CurrentProject.GetName());
+    Info.SetTaskCount(CurrentProject.GetTaskCount());
+    Info.SetDependencyCount(CurrentProject.GetDependencyCount());
+    Info.SetResourceCount(CurrentProject.GetResourceCount());
+    Info.SetTotalCost(CurrentProject.GetProjectTotalCost());
+    ScheduleInfo Schedule;
+    RES Result = RunSchedule(Schedule);    //统计附带一次调度计算，返回其结果状态
+    Info.SetSchedule(Schedule);
+    return Result;
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -694,9 +694,10 @@ ProjectController::RES ProjectController::CollectStatistics(
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::TaskInfo::TaskInfo()
-    : Index(0), Name(""), Duration(0), IsMilestone(false), TotalCost(0.0),
-      EarlyStart(0), EarlyFinish(0), LateStart(0), LateFinish(0),
-      SlackDays(0), Predecessors(), Successors()
+    : m_uIndex(0), m_Name(""), m_iDuration(0), m_bIsMilestone(false),
+      m_rTotalCost(0.0), m_iEarlyStart(0), m_iEarlyFinish(0),
+      m_iLateStart(0), m_iLateFinish(0), m_iSlackDays(0),
+      m_Predecessors(), m_Successors()
 {
 }
 
@@ -710,6 +711,132 @@ ProjectController::TaskInfo::operator=(const TaskInfo& Source) = default;
 // 析构函数：无额外资源需要释放
 ProjectController::TaskInfo::~TaskInfo() = default;
 
+// 以下为 TaskInfo 的只读访问接口
+std::size_t ProjectController::TaskInfo::GetIndex() const
+{
+    return m_uIndex;
+}
+
+const std::string& ProjectController::TaskInfo::GetName() const
+{
+    return m_Name;
+}
+
+int ProjectController::TaskInfo::GetDuration() const
+{
+    return m_iDuration;
+}
+
+bool ProjectController::TaskInfo::IsMilestoneTask() const
+{
+    return m_bIsMilestone;
+}
+
+double ProjectController::TaskInfo::GetTotalCost() const
+{
+    return m_rTotalCost;
+}
+
+int ProjectController::TaskInfo::GetEarlyStart() const
+{
+    return m_iEarlyStart;
+}
+
+int ProjectController::TaskInfo::GetEarlyFinish() const
+{
+    return m_iEarlyFinish;
+}
+
+int ProjectController::TaskInfo::GetLateStart() const
+{
+    return m_iLateStart;
+}
+
+int ProjectController::TaskInfo::GetLateFinish() const
+{
+    return m_iLateFinish;
+}
+
+int ProjectController::TaskInfo::GetSlackDays() const
+{
+    return m_iSlackDays;
+}
+
+const std::vector<std::size_t>&
+ProjectController::TaskInfo::GetPredecessors() const
+{
+    return m_Predecessors;
+}
+
+const std::vector<std::size_t>&
+ProjectController::TaskInfo::GetSuccessors() const
+{
+    return m_Successors;
+}
+
+// 以下为 TaskInfo 的写入接口，仅控制器层在组装返回数据时使用
+void ProjectController::TaskInfo::SetIndex(std::size_t Index)
+{
+    m_uIndex = Index;
+}
+
+void ProjectController::TaskInfo::SetName(const std::string& Name)
+{
+    m_Name = Name;
+}
+
+void ProjectController::TaskInfo::SetDuration(int Duration)
+{
+    m_iDuration = Duration;
+}
+
+void ProjectController::TaskInfo::SetMilestone(bool IsMilestoneValue)
+{
+    m_bIsMilestone = IsMilestoneValue;
+}
+
+void ProjectController::TaskInfo::SetTotalCost(double TotalCost)
+{
+    m_rTotalCost = TotalCost;
+}
+
+void ProjectController::TaskInfo::SetEarlyStart(int EarlyStart)
+{
+    m_iEarlyStart = EarlyStart;
+}
+
+void ProjectController::TaskInfo::SetEarlyFinish(int EarlyFinish)
+{
+    m_iEarlyFinish = EarlyFinish;
+}
+
+void ProjectController::TaskInfo::SetLateStart(int LateStart)
+{
+    m_iLateStart = LateStart;
+}
+
+void ProjectController::TaskInfo::SetLateFinish(int LateFinish)
+{
+    m_iLateFinish = LateFinish;
+}
+
+void ProjectController::TaskInfo::SetSlackDays(int SlackDays)
+{
+    m_iSlackDays = SlackDays;
+}
+
+void ProjectController::TaskInfo::SetPredecessors(
+    const std::vector<std::size_t>& Predecessors)
+{
+    m_Predecessors = Predecessors;
+}
+
+void ProjectController::TaskInfo::SetSuccessors(
+    const std::vector<std::size_t>& Successors)
+{
+    m_Successors = Successors;
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectController::DependencyInfo::DependencyInfo
 //【函数功能】       默认构造依赖信息载体，数值成员清零。
@@ -719,7 +846,7 @@ ProjectController::TaskInfo::~TaskInfo() = default;
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::DependencyInfo::DependencyInfo()
-    : Predecessor(0), Successor(0), TypeText(""), LagDays(0)
+    : m_uPredecessor(0), m_uSuccessor(0), m_TypeText(""), m_iLagDays(0)
 {
 }
 
@@ -735,6 +862,48 @@ ProjectController::DependencyInfo::operator=(const DependencyInfo& Source)
 // 析构函数：无额外资源需要释放
 ProjectController::DependencyInfo::~DependencyInfo() = default;
 
+// 以下为 DependencyInfo 的读写接口
+std::size_t ProjectController::DependencyInfo::GetPredecessor() const
+{
+    return m_uPredecessor;
+}
+
+std::size_t ProjectController::DependencyInfo::GetSuccessor() const
+{
+    return m_uSuccessor;
+}
+
+const std::string& ProjectController::DependencyInfo::GetTypeText() const
+{
+    return m_TypeText;
+}
+
+int ProjectController::DependencyInfo::GetLagDays() const
+{
+    return m_iLagDays;
+}
+
+void ProjectController::DependencyInfo::SetPredecessor(std::size_t Predecessor)
+{
+    m_uPredecessor = Predecessor;
+}
+
+void ProjectController::DependencyInfo::SetSuccessor(std::size_t Successor)
+{
+    m_uSuccessor = Successor;
+}
+
+void ProjectController::DependencyInfo::SetTypeText(
+    const std::string& TypeText)
+{
+    m_TypeText = TypeText;
+}
+
+void ProjectController::DependencyInfo::SetLagDays(int LagDays)
+{
+    m_iLagDays = LagDays;
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectController::ResourceInfo::ResourceInfo
 //【函数功能】       默认构造资源信息载体，数值成员清零。
@@ -744,7 +913,7 @@ ProjectController::DependencyInfo::~DependencyInfo() = default;
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ResourceInfo::ResourceInfo()
-    : Name(""), UnitCost(0.0)
+    : m_Name(""), m_rUnitCost(0.0)
 {
 }
 
@@ -760,6 +929,27 @@ ProjectController::ResourceInfo::operator=(const ResourceInfo& Source)
 // 析构函数：无额外资源需要释放
 ProjectController::ResourceInfo::~ResourceInfo() = default;
 
+// 以下为 ResourceInfo 的读写接口
+const std::string& ProjectController::ResourceInfo::GetName() const
+{
+    return m_Name;
+}
+
+double ProjectController::ResourceInfo::GetUnitCost() const
+{
+    return m_rUnitCost;
+}
+
+void ProjectController::ResourceInfo::SetName(const std::string& Name)
+{
+    m_Name = Name;
+}
+
+void ProjectController::ResourceInfo::SetUnitCost(double UnitCost)
+{
+    m_rUnitCost = UnitCost;
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectController::ValidationInfo::ValidationInfo
 //【函数功能】       默认构造校验结论载体，结论初始化为不合法。
@@ -769,7 +959,7 @@ ProjectController::ResourceInfo::~ResourceInfo() = default;
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ValidationInfo::ValidationInfo()
-    : IsValid(false), Messages()
+    : m_bIsValid(false), m_Messages()
 {
 }
 
@@ -785,6 +975,29 @@ ProjectController::ValidationInfo::operator=(const ValidationInfo& Source)
 // 析构函数：无额外资源需要释放
 ProjectController::ValidationInfo::~ValidationInfo() = default;
 
+// 以下为 ValidationInfo 的读写接口
+bool ProjectController::ValidationInfo::IsValid() const
+{
+    return m_bIsValid;
+}
+
+const std::vector<std::string>&
+ProjectController::ValidationInfo::GetMessages() const
+{
+    return m_Messages;
+}
+
+void ProjectController::ValidationInfo::SetValid(bool IsValidValue)
+{
+    m_bIsValid = IsValidValue;
+}
+
+void ProjectController::ValidationInfo::SetMessages(
+    const std::vector<std::string>& Messages)
+{
+    m_Messages = Messages;
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectController::ScheduleInfo::ScheduleInfo
 //【函数功能】       默认构造调度结论载体，总工期清零。
@@ -794,7 +1007,7 @@ ProjectController::ValidationInfo::~ValidationInfo() = default;
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ScheduleInfo::ScheduleInfo()
-    : ProjectDuration(0), CriticalPath()
+    : m_iProjectDuration(0), m_CriticalPath()
 {
 }
 
@@ -810,6 +1023,29 @@ ProjectController::ScheduleInfo::operator=(const ScheduleInfo& Source)
 // 析构函数：无额外资源需要释放
 ProjectController::ScheduleInfo::~ScheduleInfo() = default;
 
+// 以下为 ScheduleInfo 的读写接口
+int ProjectController::ScheduleInfo::GetProjectDuration() const
+{
+    return m_iProjectDuration;
+}
+
+const std::vector<std::size_t>&
+ProjectController::ScheduleInfo::GetCriticalPath() const
+{
+    return m_CriticalPath;
+}
+
+void ProjectController::ScheduleInfo::SetProjectDuration(int ProjectDuration)
+{
+    m_iProjectDuration = ProjectDuration;
+}
+
+void ProjectController::ScheduleInfo::SetCriticalPath(
+    const std::vector<std::size_t>& CriticalPath)
+{
+    m_CriticalPath = CriticalPath;
+}
+
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       ProjectController::StatisticsInfo::StatisticsInfo
 //【函数功能】       默认构造统计信息载体，数值成员清零。
@@ -819,8 +1055,8 @@ ProjectController::ScheduleInfo::~ScheduleInfo() = default;
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::StatisticsInfo::StatisticsInfo()
-    : ProjectName(""), TaskCount(0), DependencyCount(0), ResourceCount(0),
-      TotalCost(0.0), Schedule()
+    : m_ProjectName(""), m_uTaskCount(0), m_uDependencyCount(0),
+      m_uResourceCount(0), m_rTotalCost(0.0), m_Schedule()
 {
 }
 
@@ -835,3 +1071,68 @@ ProjectController::StatisticsInfo::operator=(const StatisticsInfo& Source)
 
 // 析构函数：无额外资源需要释放
 ProjectController::StatisticsInfo::~StatisticsInfo() = default;
+
+// 以下为 StatisticsInfo 的读写接口
+const std::string& ProjectController::StatisticsInfo::GetProjectName() const
+{
+    return m_ProjectName;
+}
+
+std::size_t ProjectController::StatisticsInfo::GetTaskCount() const
+{
+    return m_uTaskCount;
+}
+
+std::size_t ProjectController::StatisticsInfo::GetDependencyCount() const
+{
+    return m_uDependencyCount;
+}
+
+std::size_t ProjectController::StatisticsInfo::GetResourceCount() const
+{
+    return m_uResourceCount;
+}
+
+double ProjectController::StatisticsInfo::GetTotalCost() const
+{
+    return m_rTotalCost;
+}
+
+const ProjectController::ScheduleInfo&
+ProjectController::StatisticsInfo::GetSchedule() const
+{
+    return m_Schedule;
+}
+
+void ProjectController::StatisticsInfo::SetProjectName(
+    const std::string& ProjectName)
+{
+    m_ProjectName = ProjectName;
+}
+
+void ProjectController::StatisticsInfo::SetTaskCount(std::size_t TaskCount)
+{
+    m_uTaskCount = TaskCount;
+}
+
+void ProjectController::StatisticsInfo::SetDependencyCount(
+    std::size_t DependencyCount)
+{
+    m_uDependencyCount = DependencyCount;
+}
+
+void ProjectController::StatisticsInfo::SetResourceCount(
+    std::size_t ResourceCount)
+{
+    m_uResourceCount = ResourceCount;
+}
+
+void ProjectController::StatisticsInfo::SetTotalCost(double TotalCost)
+{
+    m_rTotalCost = TotalCost;
+}
+
+void ProjectController::StatisticsInfo::SetSchedule(const ScheduleInfo& Schedule)
+{
+    m_Schedule = Schedule;
+}

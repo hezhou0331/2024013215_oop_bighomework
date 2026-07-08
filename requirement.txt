@@ -7,5 +7,3 @@ C++标准版本: C++17
 
 编译方式（在本目录下执行）:
     g++ -std=c++17 -Wall -Wextra -pedantic -Iinclude -o project_scheduler main.cpp src/model/*.cpp src/controller/*.cpp src/view/*.cpp
-或使用附带的 Makefile:
-    mingw32-make

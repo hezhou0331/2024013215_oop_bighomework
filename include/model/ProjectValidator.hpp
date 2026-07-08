@@ -4,8 +4,8 @@
 //【开发者及日期】           2024013215, 2026-07-05
 //【更改记录】               2026-07-05 按课程 C++ 编码规范 V1.3 修订注释与标识符命名。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_PROJECT_VALIDATOR_HPP
-#define PROJECT_SCHEDULER_PROJECT_VALIDATOR_HPP
+#ifndef PROJECT_VALIDATOR_HPP
+#define PROJECT_VALIDATOR_HPP
 
 //ValidationResult 校验结果类所属头文件
 #include "model/ValidationResult.hpp"
@@ -61,8 +61,6 @@ private:
     //-----------------------------------------------------------------------------------------------------------
     // 判断是否所有任务都位于某条从起始任务到结束任务的路径上
     bool HasReachableNodes(const Project& SourceProject) const;
-    // 判断项目是否同时存在起始任务（无前驱）与结束任务（无后继）
-    bool HasProperStartEnd(const Project& SourceProject) const;
     // 按依赖列表构建邻接表：每个任务的直接后继索引集合
     std::vector<std::vector<std::size_t>> BuildAdjacency(
         const Project& SourceProject) const;

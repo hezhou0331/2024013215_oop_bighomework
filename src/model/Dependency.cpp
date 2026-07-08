@@ -152,20 +152,20 @@ bool Dependency::IsSelfDependency() const
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       Dependency::InvolvesTask
+//【函数名称】       Dependency::HasTask
 //【函数功能】       判断给定任务是否作为前置或后置参与本依赖。
 //【参数】           TaskIndex（输入参数）：待检查的任务下标。
 //【返回值】         该任务是本依赖的前置或后置时返回 true，否则返回 false。
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
-bool Dependency::InvolvesTask(std::size_t TaskIndex) const
+bool Dependency::HasTask(std::size_t TaskIndex) const
 {
     return (m_uPredecessor == TaskIndex) || (m_uSuccessor == TaskIndex);
 }
 
 //-------------------------------------------------------------------------------------------------------------------
-//【函数名称】       Dependency::Matches
+//【函数名称】       Dependency::HasEndpoints
 //【函数功能】       判断本依赖是否恰好连接给定的前置、后置任务对（方向敏感）。
 //【参数】           Predecessor（输入参数）：期望的前置任务下标；
 //                   Successor（输入参数）：期望的后置任务下标。
@@ -173,7 +173,8 @@ bool Dependency::InvolvesTask(std::size_t TaskIndex) const
 //【开发者及日期】   2024013215, 2026-07-05
 //【更改记录】
 //-------------------------------------------------------------------------------------------------------------------
-bool Dependency::Matches(std::size_t Predecessor, std::size_t Successor) const
+bool Dependency::HasEndpoints(std::size_t Predecessor,
+                              std::size_t Successor) const
 {
     return (m_uPredecessor == Predecessor) && (m_uSuccessor == Successor);
 }

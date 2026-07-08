@@ -5,8 +5,8 @@
 //【开发者及日期】           2024013215, 2026-07-05
 //【更改记录】               2026-07-05 按课程 C++ 编码规范 V1.3 修订注释与标识符命名。
 //-------------------------------------------------------------------------------------------------------------------
-#ifndef PROJECT_SCHEDULER_VALIDATION_RESULT_HPP
-#define PROJECT_SCHEDULER_VALIDATION_RESULT_HPP
+#ifndef VALIDATION_RESULT_HPP
+#define VALIDATION_RESULT_HPP
 
 //std::string 所属头文件
 #include <string>
