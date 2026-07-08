@@ -4,7 +4,7 @@
 //                           菜单显示、用户输入读取、命令分发
 //                           把控制器回传的状态枚举与信息类格式化为控制台文本
 //【开发者及日期】           刘江宇, 2026-07-05
-//【修改记录】               2026-07-07 配合控制器接口重构
+//【更改记录】               2026-07-07 配合控制器接口重构
 //                           格式化职责移入本类
 //-------------------------------------------------------------------------------------------------------------------
 #include "view/ConsoleUI.hpp"
@@ -161,26 +161,31 @@ bool ConsoleUI::HandleChoice(int Choice) const
 //-------------------------------------------------------------------------------------------------------------------
 std::string ConsoleUI::ResultToText(ProjectController::RES Result) const
 {
-    switch (Result) {
-    case ProjectController::RES::SUCCESS :              //操作成功
+    if (Result == ProjectController::RES::SUCCESS) {
         return "Operation completed successfully.";
-    case ProjectController::RES::INVALID_ARGUMENT :     //参数被模型层拒绝
-        return "Invalid argument rejected by the model.";
-    case ProjectController::RES::INDEX_OUT_OF_RANGE :   //索引越界
-        return "Index out of range.";
-    case ProjectController::RES::SELF_DEPENDENCY :      //自依赖
-        return "Self-dependency is not allowed.";
-    case ProjectController::RES::CYCLE_DETECTED :       //将导致循环依赖
-        return "Dependency would create a cycle.";
-    case ProjectController::RES::FILE_ERROR :           //文件类型不支持或无法打开
-        return "File cannot be opened or its type is not supported.";
-    case ProjectController::RES::PARSE_ERROR :          //文件内容格式非法
-        return "File content is malformed.";
-    case ProjectController::RES::INVALID_PROJECT :      //项目不合理，无法调度
-        return "Cannot schedule an invalid project.";
-    default :                                           //其余取值一律视为未知错误
-        return "Unknown error.";
     }
+    if (Result == ProjectController::RES::INVALID_ARGUMENT) {
+        return "Invalid argument rejected by the model.";
+    }
+    if (Result == ProjectController::RES::INDEX_OUT_OF_RANGE) {
+        return "Index out of range.";
+    }
+    if (Result == ProjectController::RES::SELF_DEPENDENCY) {
+        return "Self-dependency is not allowed.";
+    }
+    if (Result == ProjectController::RES::CYCLE_DETECTED) {
+        return "Dependency would create a cycle.";
+    }
+    if (Result == ProjectController::RES::FILE_ERROR) {
+        return "File cannot be opened or its type is not supported.";
+    }
+    if (Result == ProjectController::RES::PARSE_ERROR) {
+        return "File content is malformed.";
+    }
+    if (Result == ProjectController::RES::INVALID_PROJECT) {
+        return "Cannot schedule an invalid project.";
+    }
+    return "Unknown error.";
 }
 
 //-------------------------------------------------------------------------------------------------------------------
@@ -351,7 +356,7 @@ void ConsoleUI::RemoveTask() const
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
+//【更改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::ListTasks() const
 {
@@ -388,7 +393,7 @@ void ConsoleUI::ListTasks() const
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
+//【更改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::ListTaskRelations() const
 {
@@ -507,7 +512,7 @@ void ConsoleUI::RemoveDepByTaskPair() const
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
+//【更改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::ListDependencies() const
 {
@@ -553,7 +558,7 @@ void ConsoleUI::AddResource() const
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
+//【更改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::ListResources() const
 {
@@ -600,7 +605,7 @@ void ConsoleUI::AssignResource() const
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
+//【更改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::ValidateProject() const
 {
@@ -624,7 +629,7 @@ void ConsoleUI::ValidateProject() const
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
+//【更改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::RunSchedule() const
 {
@@ -646,7 +651,7 @@ void ConsoleUI::RunSchedule() const
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
+//【更改记录】       2026-07-07 格式化逻辑由控制器迁移至此。
 //-------------------------------------------------------------------------------------------------------------------
 void ConsoleUI::ShowStatistics() const
 {
@@ -771,12 +776,16 @@ std::string ConsoleUI::ReadText(const std::string& Prompt) const
 std::size_t ConsoleUI::GetPositiveIndex(const std::string& Prompt) const
 {
     int Value = 0;                                    //读取的整数值
-    while (true) {
+    bool IsValid = false;                             //是否已读到合法索引
+    while (IsValid == false) {
         Value = ReadInt(Prompt);                      //读取一个整数
         if (Value >= 0) {                             //非负数合法
-            return static_cast<std::size_t>(Value);
+            IsValid = true;
         }
-        //负数提示错误并重试
-        std::cout << "Index must be non-negative. Please try again.\n";
+        else {
+            //负数提示错误并重试
+            std::cout << "Index must be non-negative. Please try again.\n";
+        }
     }
+    return static_cast<std::size_t>(Value);
 }

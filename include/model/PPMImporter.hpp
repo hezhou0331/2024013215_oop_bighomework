@@ -2,7 +2,7 @@
 //【文件名】                 PPMImporter.hpp
 //【功能模块和目的】         声明 PPM 格式导入器，把 PPM 文本文件解析为内存中的 Project 对象。
 //【开发者及日期】           刘江宇, 2026-07-05
-//【修改记录】               2026-07-07 基类重构为 Importer<Project> 模板，改为实现流解析接口。
+//【更改记录】               2026-07-07 基类重构为 Importer<Project> 模板，改为实现流解析接口。
 //                           2026-07-07 按行类型拆分解析函数，并增加区块顺序与连续性校验。
 //-------------------------------------------------------------------------------------------------------------------
 #ifndef PPM_IMPORTER_HPP
@@ -26,7 +26,7 @@
 //                     CheckLineOrder 为内部工具函数；导入器无内部状态，禁止拷贝构造与
 //                     拷贝赋值。
 //【开发者及日期】     刘江宇, 2026-07-05
-//【修改记录】         2026-07-07 基类重构为 Importer<Project> 模板，改为实现流解析接口。
+//【更改记录】         2026-07-07 基类重构为 Importer<Project> 模板，改为实现流解析接口。
 //                     2026-07-07 按行类型拆分解析函数，并增加区块顺序与连续性校验。
 //-------------------------------------------------------------------------------------------------------------------
 class PPMImporter : public Importer<Project> {
@@ -85,7 +85,7 @@ private:
         const std::map<int, std::size_t>& TaskIdToIndex,
         const std::map<int, std::size_t>& ResourceIdToIndex);
     // 处理解析异常：补充行号后重新抛出
-    static void HandleLineError(int LineNumber, const std::string& Kind,
+    static void HandleLineError(int LineNumber, const std::string& LineKind,
                                 const std::exception& Exception);
     // 分发行解析：根据行首标识类型调用对应的解析函数
     static void DispatchLineParsing(

@@ -5,7 +5,7 @@
 //                           项目、任务、依赖与资源的管理及校验调度
 //                           以状态枚举与信息类回传结果，不做任何文本格式化
 //【开发者及日期】           刘江宇, 2026-07-05
-//【修改记录】               2026-07-07 重构为状态枚举+信息类接口
+//【更改记录】               2026-07-07 重构为状态枚举+信息类接口
 //                           文本格式化移交界面层
 //-------------------------------------------------------------------------------------------------------------------
 #include "controller/ProjectController.hpp"
@@ -40,7 +40,7 @@ ProjectController& ProjectController::GetInstance()
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 增加PPM导入/导出器的工厂注册
+//【更改记录】       2026-07-07 增加PPM导入/导出器的工厂注册
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ProjectController()
     : m_Repository(), m_LastError("")
@@ -79,7 +79,7 @@ const std::string& ProjectController::GetLastError() const
 //【返回值】         RES，SUCCESS 表示创建成功；名称非法返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为返回状态枚举。
+//【更改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::CreateProject(
     const std::string& Name)
@@ -106,7 +106,7 @@ ProjectController::RES ProjectController::CreateProject(
 //【参数】           FileName（输入参数）：待导入的项目模型文件路径。
 //【返回值】         RES，SUCCESS 表示导入成功；失败详情（含解析错误行号）写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为经导入器工厂按扩展名选取导入器。
+//【更改记录】       2026-07-07 改为经导入器工厂按扩展名选取导入器。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::ImportProject(
     const std::string& FileName)
@@ -140,7 +140,7 @@ ProjectController::RES ProjectController::ImportProject(
 //【返回值】         RES，SUCCESS 表示导出成功；扩展名未注册或文件不可写返回 FILE_ERROR，
 //                   其他异常返回 UNKNOWN_ERROR；失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为经导出器工厂按扩展名选取导出器。
+//【更改记录】       2026-07-07 改为经导出器工厂按扩展名选取导出器。
 //                   2026-07-07 改为非 const 接口，失败时更新 LastError。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::ExportProject(
@@ -171,7 +171,7 @@ ProjectController::RES ProjectController::ExportProject(
 //【返回值】         RES，SUCCESS 表示添加成功；名称重复或工期非法返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为返回状态枚举。
+//【更改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::AddTask(const std::string& Name,
                                                   int Duration)
@@ -206,7 +206,7 @@ ProjectController::RES ProjectController::AddTask(const std::string& Name,
 //【返回值】         RES，SUCCESS 表示修改成功；索引越界返回 INDEX_OUT_OF_RANGE，
 //                   参数非法返回 INVALID_ARGUMENT，失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为返回状态枚举。
+//【更改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::UpdateTask(std::size_t Index,
                                                      const std::string& Name,
@@ -238,7 +238,7 @@ ProjectController::RES ProjectController::UpdateTask(std::size_t Index,
 //【返回值】         RES，SUCCESS 表示删除成功；索引越界返回 INDEX_OUT_OF_RANGE，
 //                   失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为返回状态枚举。
+//【更改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::RemoveTask(std::size_t Index)
 {
@@ -292,7 +292,7 @@ ProjectController::TaskInfo ProjectController::BuildTaskInfo(
 //【参数】           InfoList（输出参数）：填充任务展示信息的列表，原有内容被清空。
 //【返回值】         RES，恒为 SUCCESS。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为回传信息类列表。
+//【更改记录】       2026-07-07 改为回传信息类列表。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::GetTaskList(
     TaskInfoList& InfoList) const
@@ -316,7 +316,7 @@ ProjectController::RES ProjectController::GetTaskList(
 //                   Successors（输出参数）：后继任务信息列表，原有内容被清空。
 //【返回值】         RES，SUCCESS 表示查询成功；索引越界返回 INDEX_OUT_OF_RANGE。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为回传信息类列表。
+//【更改记录】       2026-07-07 改为回传信息类列表。
 //                   2026-07-07 增加被查询任务自身信息的输出参数。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::GetTaskRelations(
@@ -343,12 +343,10 @@ ProjectController::RES ProjectController::GetTaskRelations(
         }
         return RES::SUCCESS;
     }
-    catch (const std::out_of_range& Exception) {        //索引越界
-        (void)Exception;                                //const 接口不改写 LastError
+    catch (const std::out_of_range&) {                  //索引越界，const 接口不改写 LastError
         return RES::INDEX_OUT_OF_RANGE;
     }
-    catch (const std::exception& Exception) {           //其余未预期异常
-        (void)Exception;
+    catch (const std::exception&) {                     //其余未预期异常
         return RES::UNKNOWN_ERROR;
     }
 }
@@ -365,7 +363,7 @@ ProjectController::RES ProjectController::GetTaskRelations(
 //                   CYCLE_DETECTED，重复依赖或类型非法返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为返回状态枚举。
+//【更改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::AddDependency(
     std::size_t Predecessor,
@@ -418,7 +416,7 @@ ProjectController::RES ProjectController::AddDependency(
 //【返回值】         RES，SUCCESS 表示删除成功；索引越界返回 INDEX_OUT_OF_RANGE，
 //                   失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为返回状态枚举。
+//【更改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::RemoveDependency(std::size_t Index)
 {
@@ -474,7 +472,7 @@ ProjectController::RES ProjectController::RemoveDependency(std::size_t Predecess
 //【参数】           InfoList（输出参数）：填充依赖展示信息的列表，原有内容被清空。
 //【返回值】         RES，恒为 SUCCESS。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为回传信息类列表。
+//【更改记录】       2026-07-07 改为回传信息类列表。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::GetDependencyList(
     DependencyInfoList& InfoList) const
@@ -504,7 +502,7 @@ ProjectController::RES ProjectController::GetDependencyList(
 //【返回值】         RES，SUCCESS 表示添加成功；名称重复或成本非法返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为返回状态枚举。
+//【更改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::AddResource(const std::string& Name,
                                                       double UnitCost)
@@ -534,7 +532,7 @@ ProjectController::RES ProjectController::AddResource(const std::string& Name,
 //【返回值】         RES，SUCCESS 表示分配成功；索引越界返回 INDEX_OUT_OF_RANGE，
 //                   里程碑占用资源或数量非法返回 INVALID_ARGUMENT，失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为返回状态枚举。
+//【更改记录】       2026-07-07 改为返回状态枚举。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::AssignResource(
     std::size_t TaskIndex,
@@ -572,7 +570,7 @@ ProjectController::RES ProjectController::AssignResource(
 //【参数】           InfoList（输出参数）：填充资源展示信息的列表，原有内容被清空。
 //【返回值】         RES，恒为 SUCCESS。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为回传信息类列表。
+//【更改记录】       2026-07-07 改为回传信息类列表。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::GetResourceList(
     ResourceInfoList& InfoList) const
@@ -598,7 +596,7 @@ ProjectController::RES ProjectController::GetResourceList(
 //【参数】           Info（输出参数）：填充校验结论与错误信息。
 //【返回值】         RES，恒为 SUCCESS（校验结论在 Info.IsValid() 中）。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为回传信息类。
+//【更改记录】       2026-07-07 改为回传信息类。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::ValidateProject(
     ValidationInfo& Info) const
@@ -619,7 +617,7 @@ ProjectController::RES ProjectController::ValidateProject(
 //【返回值】         RES，SUCCESS 表示计算完成；项目不合理返回 INVALID_PROJECT，
 //                   失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为回传信息类。
+//【更改记录】       2026-07-07 改为回传信息类。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::RunSchedule(ScheduleInfo& Info)
 {
@@ -650,7 +648,7 @@ ProjectController::RES ProjectController::RunSchedule(ScheduleInfo& Info)
 //【返回值】         RES，SUCCESS 表示统计完成；项目不合理无法调度时返回 INVALID_PROJECT
 //                   （此时计数与成本字段仍然有效），失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-05
-//【修改记录】       2026-07-07 改为回传信息类，并更名以明确该操作会触发调度计算。
+//【更改记录】       2026-07-07 改为回传信息类，并更名以明确该操作会触发调度计算。
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::CollectStatistics(
     StatisticsInfo& Info)
