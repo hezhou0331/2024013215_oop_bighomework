@@ -16,6 +16,7 @@
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Dependency::Dependency()
     : m_uPredecessor(0),
@@ -33,8 +34,9 @@ Dependency::Dependency()
 //                   Successor（输入参数）：后置任务下标；
 //                   DependencyType（输入参数）：依赖类型（FS/SS/FF/SF）；
 //                   LagDays（输入参数）：延迟天数，可为负表示提前。
-//【返回值】         无。；自依赖时抛出 std::invalid_argument。
+//【返回值】         无；自依赖时抛出 std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Dependency::Dependency(std::size_t Predecessor,
                        std::size_t Successor,
@@ -56,6 +58,7 @@ Dependency::Dependency(std::size_t Predecessor,
 //【参数】           Source（输入参数）：被拷贝的依赖关系对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Dependency::Dependency(const Dependency& Source) = default;
 
@@ -65,6 +68,7 @@ Dependency::Dependency(const Dependency& Source) = default;
 //【参数】           Source（输入参数）：赋值来源的依赖关系对象。
 //【返回值】         返回自身引用，支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Dependency& Dependency::operator=(const Dependency& Source) = default;
 
@@ -74,6 +78,7 @@ Dependency& Dependency::operator=(const Dependency& Source) = default;
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Dependency::~Dependency() = default;
 
@@ -83,6 +88,7 @@ Dependency::~Dependency() = default;
 //【参数】           无
 //【返回值】         返回前置任务在项目任务表中的下标。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t Dependency::GetPredecessor() const
 {
@@ -95,6 +101,7 @@ std::size_t Dependency::GetPredecessor() const
 //【参数】           无
 //【返回值】         返回后置任务在项目任务表中的下标。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t Dependency::GetSuccessor() const
 {
@@ -107,6 +114,7 @@ std::size_t Dependency::GetSuccessor() const
 //【参数】           无
 //【返回值】         返回依赖类型枚举值（FS/SS/FF/SF 之一）。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Dependency::Type Dependency::GetType() const
 {
@@ -119,6 +127,7 @@ Dependency::Type Dependency::GetType() const
 //【参数】           无
 //【返回值】         返回延迟天数，正值表示滞后，负值表示提前。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 int Dependency::GetLag() const
 {
@@ -131,6 +140,7 @@ int Dependency::GetLag() const
 //【参数】           无
 //【返回值】         自依赖返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool Dependency::IsSelfDependency() const
 {
@@ -143,6 +153,7 @@ bool Dependency::IsSelfDependency() const
 //【参数】           TaskIndex（输入参数）：待检查的任务下标。
 //【返回值】         该任务是本依赖的前置或后置时返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool Dependency::HasTask(std::size_t TaskIndex) const
 {
@@ -156,6 +167,7 @@ bool Dependency::HasTask(std::size_t TaskIndex) const
 //                   Successor（输入参数）：期望的后置任务下标。
 //【返回值】         前置与后置均相符时返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool Dependency::HasEndpoints(std::size_t Predecessor,
                               std::size_t Successor) const
@@ -170,6 +182,7 @@ bool Dependency::HasEndpoints(std::size_t Predecessor,
 //【参数】           TaskCount（输入参数）：项目中任务的总数。
 //【返回值】         依赖合法返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool Dependency::IsValidForTaskCount(std::size_t TaskCount) const
 {
@@ -246,6 +259,7 @@ int Dependency::GetPredecessorLatestStart(const Task& Predecessor,
 //【参数】           无
 //【返回值】         返回 "FS"/"SS"/"FF"/"SF" 之一。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::string Dependency::GetTypeText() const
 {
@@ -259,6 +273,7 @@ std::string Dependency::GetTypeText() const
 //【返回值】         返回对应的 Dependency::Type 枚举值；未知文本抛出
 //                   std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Dependency::Type Dependency::TypeFromText(const std::string& Text)
 {
@@ -285,6 +300,7 @@ Dependency::Type Dependency::TypeFromText(const std::string& Text)
 //【返回值】         返回 "FS"/"SS"/"FF"/"SF" 之一；枚举已覆盖全部取值，末尾分支
 //                   返回 "SF"。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::string Dependency::TypeToText(Dependency::Type DependencyType)
 {

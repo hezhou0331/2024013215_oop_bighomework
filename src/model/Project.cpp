@@ -17,6 +17,7 @@
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Project::Project()
     : m_Name("UntitledProject")
@@ -27,7 +28,7 @@ Project::Project()
 //【函数名称】       Project::Project
 //【函数功能】       以给定名称构造空项目，并校验名称非空且无空白字符。
 //【参数】           Name（输入参数）：项目名称，不允许为空或含空白字符。
-//【返回值】         无。；名称非法时抛出 std::invalid_argument。
+//【返回值】         无；名称非法时抛出 std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
 //【更改记录】       2026-07-07 改为调用 SetName 确保构造函数与 SetName 校验规则一致。
 //-------------------------------------------------------------------------------------------------------------------
@@ -43,6 +44,7 @@ Project::Project(const std::string& Name)
 //【参数】           Source（输入参数）：作为拷贝来源的项目对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Project::Project(const Project& Source)
     : m_Name(Source.m_Name),
@@ -62,6 +64,7 @@ Project::Project(const Project& Source)
 //【参数】           Source（输入参数）：作为赋值来源的项目对象。
 //【返回值】         Project&，返回自身引用以支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Project& Project::operator=(const Project& Source)
 {
@@ -78,6 +81,7 @@ Project& Project::operator=(const Project& Source)
 //【参数】           Source（输入参数）：被移动的项目对象，移动后处于有效但未指定状态。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Project::Project(Project&& Source) noexcept = default;
 
@@ -87,6 +91,7 @@ Project::Project(Project&& Source) noexcept = default;
 //【参数】           Source（输入参数）：被移动的项目对象，移动后处于有效但未指定状态。
 //【返回值】         Project&，返回自身引用以支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Project& Project::operator=(Project&& Source) noexcept = default;
 
@@ -96,6 +101,7 @@ Project& Project::operator=(Project&& Source) noexcept = default;
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Project::~Project() = default;
 
@@ -105,6 +111,7 @@ Project::~Project() = default;
 //【参数】           无
 //【返回值】         const std::string&，项目名称的只读引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::string& Project::GetName() const
 {
@@ -115,8 +122,9 @@ const std::string& Project::GetName() const
 //【函数名称】       Project::SetName
 //【函数功能】       设置项目名称，并校验名称非空。
 //【参数】           Name（输入参数）：新的项目名称，不允许为空字符串。
-//【返回值】         无。；名称为空时抛出 std::invalid_argument。
+//【返回值】         无；名称为空时抛出 std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::SetName(const std::string& Name)
 {
@@ -141,6 +149,7 @@ void Project::SetName(const std::string& Name)
 //                   Duration（输入参数）：任务工期，正整数，单位：天。
 //【返回值】         std::size_t，新任务在任务列表中的索引；任务名重复时抛出 std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t Project::AddBasicTask(const std::string& Name, int Duration)
 {
@@ -160,6 +169,7 @@ std::size_t Project::AddBasicTask(const std::string& Name, int Duration)
 //【参数】           Name（输入参数）：任务名称，项目内必须唯一。
 //【返回值】         std::size_t，新任务在任务列表中的索引；任务名重复时抛出 std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t Project::AddMilestoneTask(const std::string& Name)
 {
@@ -177,8 +187,9 @@ std::size_t Project::AddMilestoneTask(const std::string& Name)
 //【函数功能】       删除指定索引的任务：删除涉及该任务的全部依赖，并把索引大于它的
 //                   依赖端点整体前移一位，最后重建任务前驱后继缓存。
 //【参数】           TaskIndex（输入参数）：待删除任务在任务列表中的索引。
-//【返回值】         无。；索引越界时抛出 std::out_of_range。
+//【返回值】         无；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::RemoveTask(std::size_t TaskIndex)
 {
@@ -216,8 +227,9 @@ void Project::RemoveTask(std::size_t TaskIndex)
 //【参数】           TaskIndex（输入参数）：待更新任务在任务列表中的索引；
 //                   Name（输入参数）：任务的新名称，不得与其他任务重名；
 //                   Duration（输入参数）：任务的新工期，非负整数，0 表示里程碑。
-//【返回值】         无。；索引越界、重名或工期为负时抛出异常。
+//【返回值】         无；索引越界、重名或工期为负时抛出异常。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::UpdateTask(std::size_t TaskIndex,
                          const std::string& Name,
@@ -264,6 +276,7 @@ void Project::UpdateTask(std::size_t TaskIndex,
 //                   UnitCost（输入参数）：资源单位成本。
 //【返回值】         std::size_t，新资源在资源列表中的索引；资源名重复时抛出 std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t Project::AddResource(const std::string& Name, double UnitCost)
 {
@@ -281,8 +294,9 @@ std::size_t Project::AddResource(const std::string& Name, double UnitCost)
 //【参数】           TaskIndex（输入参数）：目标任务在任务列表中的索引；
 //                   ResourceIndex（输入参数）：被占用资源在资源列表中的索引；
 //                   Quantity（输入参数）：占用数量，正整数。
-//【返回值】         无。；任务或资源索引越界时抛出 std::out_of_range。
+//【返回值】         无；任务或资源索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::AssignResource(std::size_t TaskIndex,
                              std::size_t ResourceIndex,
@@ -298,8 +312,9 @@ void Project::AssignResource(std::size_t TaskIndex,
 //【函数功能】       新增一条依赖关系：校验其引用的任务索引有效且同一对任务间不存在
 //                   重复依赖，然后加入依赖列表并重建任务前驱后继缓存。
 //【参数】           CurrentDependency（输入参数）：待加入的依赖关系对象。
-//【返回值】         无。；引用非法或依赖重复时抛出 std::invalid_argument。
+//【返回值】         无；引用非法或依赖重复时抛出 std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::AddDependency(const Dependency& CurrentDependency)
 {
@@ -320,8 +335,9 @@ void Project::AddDependency(const Dependency& CurrentDependency)
 //【函数名称】       Project::RemoveDependency
 //【函数功能】       按依赖列表索引删除一条依赖关系，并重建任务前驱后继缓存。
 //【参数】           DependencyIndex（输入参数）：待删除依赖在依赖列表中的索引。
-//【返回值】         无。；索引越界时抛出 std::out_of_range。
+//【返回值】         无；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::RemoveDependency(std::size_t DependencyIndex)
 {
@@ -339,8 +355,9 @@ void Project::RemoveDependency(std::size_t DependencyIndex)
 //                   前驱后继缓存。
 //【参数】           Predecessor（输入参数）：依赖的前置任务索引；
 //                   Successor（输入参数）：依赖的后置任务索引。
-//【返回值】         无。；对应依赖不存在时抛出 std::invalid_argument。
+//【返回值】         无；对应依赖不存在时抛出 std::invalid_argument。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::RemoveDependency(std::size_t Predecessor, std::size_t Successor)
 {
@@ -367,6 +384,7 @@ void Project::RemoveDependency(std::size_t Predecessor, std::size_t Successor)
 //【参数】           无
 //【返回值】         std::size_t，任务列表中的任务个数。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t Project::GetTaskCount() const
 {
@@ -379,6 +397,7 @@ std::size_t Project::GetTaskCount() const
 //【参数】           无
 //【返回值】         std::size_t，依赖列表中的依赖个数。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t Project::GetDependencyCount() const
 {
@@ -391,6 +410,7 @@ std::size_t Project::GetDependencyCount() const
 //【参数】           无
 //【返回值】         std::size_t，资源列表中的资源个数。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t Project::GetResourceCount() const
 {
@@ -403,6 +423,7 @@ std::size_t Project::GetResourceCount() const
 //【参数】           Index（输入参数）：任务在任务列表中的索引。
 //【返回值】         const Task&，对应任务的只读引用；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const Task& Project::GetTask(std::size_t Index) const
 {
@@ -416,6 +437,7 @@ const Task& Project::GetTask(std::size_t Index) const
 //【参数】           Index（输入参数）：任务在任务列表中的索引。
 //【返回值】         Task&，对应任务的可修改引用；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Task& Project::GetTask(std::size_t Index)
 {
@@ -429,6 +451,7 @@ Task& Project::GetTask(std::size_t Index)
 //【参数】           Index（输入参数）：依赖在依赖列表中的索引。
 //【返回值】         const Dependency&，对应依赖的只读引用；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const Dependency& Project::GetDependency(std::size_t Index) const
 {
@@ -444,6 +467,7 @@ const Dependency& Project::GetDependency(std::size_t Index) const
 //【参数】           Index（输入参数）：资源在资源列表中的索引。
 //【返回值】         const Resource&，对应资源的只读引用；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const Resource& Project::GetResource(std::size_t Index) const
 {
@@ -457,6 +481,7 @@ const Resource& Project::GetResource(std::size_t Index) const
 //【参数】           无
 //【返回值】         const std::vector<std::unique_ptr<Task>>&，任务列表的只读引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::vector<std::unique_ptr<Task>>& Project::GetTasks() const
 {
@@ -469,6 +494,7 @@ const std::vector<std::unique_ptr<Task>>& Project::GetTasks() const
 //【参数】           无
 //【返回值】         const std::vector<Dependency>&，依赖列表的只读引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::vector<Dependency>& Project::GetDependencies() const
 {
@@ -481,6 +507,7 @@ const std::vector<Dependency>& Project::GetDependencies() const
 //【参数】           无
 //【返回值】         const std::vector<Resource>&，资源列表的只读引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::vector<Resource>& Project::GetResources() const
 {
@@ -493,6 +520,7 @@ const std::vector<Resource>& Project::GetResources() const
 //【参数】           TaskIndex（输入参数）：目标任务在任务列表中的索引。
 //【返回值】         double，该任务的资源总成本；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 double Project::GetTaskTotalCost(std::size_t TaskIndex) const
 {
@@ -506,6 +534,7 @@ double Project::GetTaskTotalCost(std::size_t TaskIndex) const
 //【参数】           无
 //【返回值】         double，项目的资源总成本。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 double Project::GetProjectTotalCost() const
 {
@@ -525,6 +554,7 @@ double Project::GetProjectTotalCost() const
 //                   最大值表示不忽略任何任务。
 //【返回值】         bool，存在同名任务返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool Project::HasTaskName(const std::string& Name,
                           std::size_t IgnoredIndex) const
@@ -544,6 +574,7 @@ bool Project::HasTaskName(const std::string& Name,
 //【参数】           Name（输入参数）：待检查的资源名称。
 //【返回值】         bool，存在同名资源返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool Project::HasResourceName(const std::string& Name) const
 {
@@ -562,6 +593,7 @@ bool Project::HasResourceName(const std::string& Name) const
 //                   Successor（输入参数）：依赖的后置任务索引。
 //【返回值】         bool，已存在对应依赖返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool Project::HasDependency(std::size_t Predecessor,
                             std::size_t Successor) const
@@ -581,6 +613,7 @@ bool Project::HasDependency(std::size_t Predecessor,
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::RebuildTaskRelations()
 {
@@ -610,6 +643,7 @@ void Project::RebuildTaskRelations()
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::ClearSchedule()
 {
@@ -622,8 +656,9 @@ void Project::ClearSchedule()
 //【函数名称】       Project::CheckTaskIndex
 //【函数功能】       内部校验：任务索引越界时抛出异常，供各任务访问接口复用。
 //【参数】           Index（输入参数）：待校验的任务索引。
-//【返回值】         无。；索引越界时抛出 std::out_of_range。
+//【返回值】         无；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::CheckTaskIndex(std::size_t Index) const
 {
@@ -636,8 +671,9 @@ void Project::CheckTaskIndex(std::size_t Index) const
 //【函数名称】       Project::CheckResourceIndex
 //【函数功能】       内部校验：资源索引越界时抛出异常，供各资源访问接口复用。
 //【参数】           Index（输入参数）：待校验的资源索引。
-//【返回值】         无。；索引越界时抛出 std::out_of_range。
+//【返回值】         无；索引越界时抛出 std::out_of_range。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void Project::CheckResourceIndex(std::size_t Index) const
 {

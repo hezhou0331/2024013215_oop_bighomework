@@ -15,6 +15,7 @@
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectValidator::ProjectValidator() = default;
 
@@ -24,6 +25,7 @@ ProjectValidator::ProjectValidator() = default;
 //【参数】           Source（输入参数）：作为拷贝来源的校验器对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectValidator::ProjectValidator(const ProjectValidator& Source) = default;
 
@@ -33,6 +35,7 @@ ProjectValidator::ProjectValidator(const ProjectValidator& Source) = default;
 //【参数】           Source（输入参数）：作为赋值来源的校验器对象。
 //【返回值】         ProjectValidator&，返回自身引用以支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectValidator& ProjectValidator::operator=(
     const ProjectValidator& Source) = default;
@@ -43,6 +46,7 @@ ProjectValidator& ProjectValidator::operator=(
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectValidator::~ProjectValidator() = default;
 
@@ -53,6 +57,7 @@ ProjectValidator::~ProjectValidator() = default;
 //【参数】           SourceProject（输入参数）：待校验的项目模型。
 //【返回值】         ValidationResult，包含全部错误信息的校验结果，无错误即校验通过。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ValidationResult ProjectValidator::Validate(const Project& SourceProject) const
 {
@@ -137,6 +142,7 @@ ValidationResult ProjectValidator::Validate(const Project& SourceProject) const
 //【参数】           SourceProject（输入参数）：待判断的项目模型。
 //【返回值】         bool，依赖图无环返回 true，存在环路返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool ProjectValidator::IsDag(const Project& SourceProject) const
 {
@@ -153,6 +159,7 @@ bool ProjectValidator::IsDag(const Project& SourceProject) const
 //【返回值】         std::vector<std::size_t>，按拓扑序排列的任务索引序列；依赖图有环时
 //                   序列长度小于任务总数。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::vector<std::size_t> ProjectValidator::GetTopologicalOrder(
     const Project& SourceProject) const
@@ -195,6 +202,7 @@ std::vector<std::size_t> ProjectValidator::GetTopologicalOrder(
 //【参数】           SourceProject（输入参数）：待检查的项目模型。
 //【返回值】         bool，所有任务都位于某条起止路径上返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool ProjectValidator::HasReachableNodes(const Project& SourceProject) const
 {
@@ -269,6 +277,7 @@ bool ProjectValidator::HasReachableNodes(const Project& SourceProject) const
 //【返回值】         std::vector<std::vector<std::size_t>>，邻接表，第 i 项为任务 i 的
 //                   直接后继任务索引集合。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::vector<std::vector<std::size_t>> ProjectValidator::BuildAdjacency(
     const Project& SourceProject) const
@@ -295,6 +304,7 @@ std::vector<std::vector<std::size_t>> ProjectValidator::BuildAdjacency(
 //【返回值】         std::vector<std::vector<std::size_t>>，逆邻接表，第 i 项为任务 i 的
 //                   直接前驱任务索引集合。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::vector<std::vector<std::size_t>> ProjectValidator::BuildReverseAdjacency(
     const Project& SourceProject) const
@@ -319,6 +329,7 @@ std::vector<std::vector<std::size_t>> ProjectValidator::BuildReverseAdjacency(
 //【参数】           SourceProject（输入参数）：提供任务数与依赖列表的项目模型。
 //【返回值】         std::vector<int>，入度表，第 i 项为任务 i 的直接前驱个数。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::vector<int> ProjectValidator::BuildIndegrees(
     const Project& SourceProject) const

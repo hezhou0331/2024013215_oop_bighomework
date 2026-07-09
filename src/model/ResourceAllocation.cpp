@@ -13,6 +13,7 @@
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ResourceAllocation::ResourceAllocation()
     : m_uResourceIndex(0),
@@ -45,6 +46,7 @@ ResourceAllocation::ResourceAllocation(std::size_t ResourceIndex,
 //【参数】           Source（输入参数）：被拷贝的资源分配记录。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ResourceAllocation::ResourceAllocation(const ResourceAllocation& Source)
     = default;
@@ -66,6 +68,7 @@ ResourceAllocation& ResourceAllocation::operator=(
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ResourceAllocation::~ResourceAllocation() = default;
 
@@ -75,6 +78,7 @@ ResourceAllocation::~ResourceAllocation() = default;
 //【参数】           无
 //【返回值】         std::size_t，资源索引。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::size_t ResourceAllocation::GetResourceIndex() const
 {
@@ -87,6 +91,7 @@ std::size_t ResourceAllocation::GetResourceIndex() const
 //【参数】           无
 //【返回值】         int，占用数量，正整数。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 int ResourceAllocation::GetQuantity() const
 {
@@ -99,6 +104,7 @@ int ResourceAllocation::GetQuantity() const
 //【参数】           Quantity（输入参数）：新的占用数量，必须为正整数。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ResourceAllocation::SetQuantity(int Quantity)
 {

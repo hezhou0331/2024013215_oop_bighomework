@@ -12,6 +12,7 @@
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ValidationResult::ValidationResult()
     : m_bIsValid(true)
@@ -24,6 +25,7 @@ ValidationResult::ValidationResult()
 //【参数】           Source（输入参数）：被拷贝的校验结果对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ValidationResult::ValidationResult(const ValidationResult& Source) = default;
 
@@ -33,6 +35,7 @@ ValidationResult::ValidationResult(const ValidationResult& Source) = default;
 //【参数】           Source（输入参数）：赋值来源的校验结果对象。
 //【返回值】         返回自身引用，支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ValidationResult& ValidationResult::operator=(const ValidationResult& Source)
     = default;
@@ -43,6 +46,7 @@ ValidationResult& ValidationResult::operator=(const ValidationResult& Source)
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ValidationResult::~ValidationResult() = default;
 
@@ -52,6 +56,7 @@ ValidationResult::~ValidationResult() = default;
 //【参数】           无
 //【返回值】         项目合法返回 true，存在错误返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool ValidationResult::IsValid() const
 {
@@ -64,6 +69,7 @@ bool ValidationResult::IsValid() const
 //【参数】           无
 //【返回值】         返回错误信息文本列表的常引用，合法项目对应空列表。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::vector<std::string>& ValidationResult::GetMessages() const
 {
@@ -76,6 +82,7 @@ const std::vector<std::string>& ValidationResult::GetMessages() const
 //【参数】           Message（输入参数）：描述错误原因的文本。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ValidationResult::AddError(const std::string& Message)
 {

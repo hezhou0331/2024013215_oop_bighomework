@@ -34,6 +34,7 @@ PPMImporter::PPMImporter()
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 PPMImporter::~PPMImporter() = default;
 
@@ -103,6 +104,7 @@ Project PPMImporter::LoadFromStream(std::ifstream& Stream) const
 //【参数】           Kind（输入参数）：行首标识字符串（P/T/M/R/D/A 之一）。
 //【返回值】         char，行所属的区块组标识。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 char PPMImporter::GroupOf(const std::string& Kind)
 {
@@ -120,8 +122,9 @@ char PPMImporter::GroupOf(const std::string& Kind)
 //【参数】           GroupChar（输入参数）：当前行的区块组标识；
 //                   SeenGroups（输入参数）：此前已出现过的区块组标识集合；
 //                   LastGroup（输入参数）：上一内容行的区块组标识。
-//【返回值】         无。；校验失败以 std::invalid_argument 异常报告。
+//【返回值】         无；校验失败以 std::invalid_argument 异常报告。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::CheckLineOrder(char GroupChar,
                                  const std::string& SeenGroups,
@@ -168,6 +171,7 @@ void PPMImporter::CheckLineOrder(char GroupChar,
 //                   TargetProject（输出参数）：被填充项目名称的项目对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::ParseProjectLine(std::istringstream& LineStream,
                                    Project& TargetProject)
@@ -195,6 +199,7 @@ void PPMImporter::ParseProjectLine(std::istringstream& LineStream,
 //                   TaskIdToIndex（输入/输出参数）：文件任务 ID 到容器索引的映射表。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::ParseTaskLine(const std::string& Kind,
                                 std::istringstream& LineStream,
@@ -257,6 +262,7 @@ void PPMImporter::ParseTaskLine(const std::string& Kind,
 //                   ResourceIdToIndex（输入/输出参数）：文件资源 ID 到容器索引的映射表。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::ParseResourceLine(
     std::istringstream& LineStream,
@@ -293,6 +299,7 @@ void PPMImporter::ParseResourceLine(
 //                   TaskIdToIndex（输入参数）：文件任务 ID 到容器索引的映射表。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::ParseDependencyLine(
     std::istringstream& LineStream,
@@ -336,6 +343,7 @@ void PPMImporter::ParseDependencyLine(
 //                   ResourceIdToIndex（输入参数）：文件资源 ID 到容器索引的映射表。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::ParseAllocationLine(
     std::istringstream& LineStream,
@@ -376,6 +384,7 @@ void PPMImporter::ParseAllocationLine(
 //【参数】           Text（输入参数）：待处理的原始字符串。
 //【返回值】         std::string，去除首尾空白后的字符串。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 //-------------------------------------------------------------------------------------------------------------------
 //【函数名称】       PPMImporter::HandleLineError（静态）
@@ -383,8 +392,9 @@ void PPMImporter::ParseAllocationLine(
 //【参数】           LineNumber（输入参数）：出错的行号；
 //                   LineKind（输入参数）：行首标识；
 //                   Exception（输入参数）：原始异常对象。
-//【返回值】         无。；总是抛出异常。
+//【返回值】         无；总是抛出异常。
 //【开发者及日期】   刘江宇, 2026-07-08
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::HandleLineError(int LineNumber,
                                   const std::string& LineKind,
@@ -405,6 +415,7 @@ void PPMImporter::HandleLineError(int LineNumber,
 //                   ResourceIdToIndex（输入/输出参数）：资源 ID 映射表。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-08
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::DispatchLineParsing(
     const std::string& Kind, std::istringstream& LineStream,
@@ -437,6 +448,7 @@ void PPMImporter::DispatchLineParsing(
 //                   LastGroup（输入/输出参数）：上一内容行的区块组标识。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-08
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void PPMImporter::UpdateSeenGroups(char GroupChar, std::string& SeenGroups,
                                    char& LastGroup)

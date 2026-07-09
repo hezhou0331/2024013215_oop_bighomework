@@ -13,6 +13,7 @@
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ScheduleResult::ScheduleResult()
     : m_bIsSuccessful(false),
@@ -26,6 +27,7 @@ ScheduleResult::ScheduleResult()
 //【参数】           Source（输入参数）：被拷贝的调度结果对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ScheduleResult::ScheduleResult(const ScheduleResult& Source) = default;
 
@@ -35,6 +37,7 @@ ScheduleResult::ScheduleResult(const ScheduleResult& Source) = default;
 //【参数】           Source（输入参数）：赋值来源的调度结果对象。
 //【返回值】         返回自身引用，支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ScheduleResult& ScheduleResult::operator=(const ScheduleResult& Source)
     = default;
@@ -45,6 +48,7 @@ ScheduleResult& ScheduleResult::operator=(const ScheduleResult& Source)
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ScheduleResult::~ScheduleResult() = default;
 
@@ -54,6 +58,7 @@ ScheduleResult::~ScheduleResult() = default;
 //【参数】           无
 //【返回值】         调度成功返回 true，否则返回 false。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool ScheduleResult::IsSuccessful() const
 {
@@ -66,6 +71,7 @@ bool ScheduleResult::IsSuccessful() const
 //【参数】           无
 //【返回值】         返回项目总工期，单位：天。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 int ScheduleResult::GetProjectDuration() const
 {
@@ -78,6 +84,7 @@ int ScheduleResult::GetProjectDuration() const
 //【参数】           无
 //【返回值】         返回拓扑序中任务下标序列的常引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::vector<std::size_t>& ScheduleResult::GetTopologicalOrder() const
 {
@@ -90,6 +97,7 @@ const std::vector<std::size_t>& ScheduleResult::GetTopologicalOrder() const
 //【参数】           无
 //【返回值】         返回关键任务下标序列的常引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::vector<std::size_t>& ScheduleResult::GetCriticalPath() const
 {
@@ -102,6 +110,7 @@ const std::vector<std::size_t>& ScheduleResult::GetCriticalPath() const
 //【参数】           无
 //【返回值】         返回任务下标到 TaskScheduleInfo 映射的常引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::map<std::size_t, TaskScheduleInfo>&
 ScheduleResult::GetTaskSchedules() const
@@ -115,6 +124,7 @@ ScheduleResult::GetTaskSchedules() const
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ScheduleResult::MarkSuccessful()
 {
@@ -127,6 +137,7 @@ void ScheduleResult::MarkSuccessful()
 //【参数】           Duration（输入参数）：项目总工期，单位：天。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ScheduleResult::SetProjectDuration(int Duration)
 {
@@ -139,6 +150,7 @@ void ScheduleResult::SetProjectDuration(int Duration)
 //【参数】           Order（输入参数）：拓扑序中任务下标的序列。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ScheduleResult::SetTopologicalOrder(const std::vector<std::size_t>& Order)
 {
@@ -151,6 +163,7 @@ void ScheduleResult::SetTopologicalOrder(const std::vector<std::size_t>& Order)
 //【参数】           TaskIndex（输入参数）：关键任务在项目任务表中的下标。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ScheduleResult::AddCriticalTask(std::size_t TaskIndex)
 {
@@ -164,6 +177,7 @@ void ScheduleResult::AddCriticalTask(std::size_t TaskIndex)
 //                   ScheduleInfo（输入参数）：该任务的时间参数集合。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ScheduleResult::SetTaskSchedule(std::size_t TaskIndex,
                                      const TaskScheduleInfo& ScheduleInfo)

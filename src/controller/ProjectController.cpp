@@ -24,6 +24,7 @@
 //【参数】           无
 //【返回值】         ProjectController&，控制器单例的引用
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController& ProjectController::GetInstance()
 {
@@ -56,6 +57,7 @@ ProjectController::ProjectController()
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::~ProjectController() = default;
 
@@ -66,6 +68,7 @@ ProjectController::~ProjectController() = default;
 //【参数】           无
 //【返回值】         const std::string&，最近一次失败操作的详细错误信息。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const std::string& ProjectController::GetLastError() const
 {
@@ -265,6 +268,7 @@ ProjectController::RES ProjectController::RemoveTask(std::size_t Index)
 //                   Index（输入参数）：目标任务的索引。
 //【返回值】         TaskInfo，采集到的任务展示信息。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::TaskInfo ProjectController::BuildTaskInfo(
     const Project& SourceProject, std::size_t Index) const
@@ -443,6 +447,7 @@ ProjectController::RES ProjectController::RemoveDependency(std::size_t Index)
 //【返回值】         RES，SUCCESS 表示删除成功；依赖不存在返回 INVALID_ARGUMENT，
 //                   失败详情写入 LastError。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::RES ProjectController::RemoveDependency(std::size_t Predecessor,
                                                             std::size_t Successor)
@@ -675,6 +680,7 @@ ProjectController::RES ProjectController::CollectStatistics(
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::TaskInfo::TaskInfo()
     : m_uIndex(0), m_Name(""), m_iDuration(0), m_bIsMilestone(false),
@@ -826,6 +832,7 @@ void ProjectController::TaskInfo::SetSuccessors(
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::DependencyInfo::DependencyInfo()
     : m_uPredecessor(0), m_uSuccessor(0), m_TypeText(""), m_iLagDays(0)
@@ -892,6 +899,7 @@ void ProjectController::DependencyInfo::SetLagDays(int LagDays)
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ResourceInfo::ResourceInfo()
     : m_Name(""), m_rUnitCost(0.0)
@@ -937,6 +945,7 @@ void ProjectController::ResourceInfo::SetUnitCost(double UnitCost)
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ValidationInfo::ValidationInfo()
     : m_bIsValid(false), m_Messages()
@@ -984,6 +993,7 @@ void ProjectController::ValidationInfo::SetMessages(
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::ScheduleInfo::ScheduleInfo()
     : m_iProjectDuration(0), m_CriticalPath()
@@ -1031,6 +1041,7 @@ void ProjectController::ScheduleInfo::SetCriticalPath(
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectController::StatisticsInfo::StatisticsInfo()
     : m_ProjectName(""), m_uTaskCount(0), m_uDependencyCount(0),

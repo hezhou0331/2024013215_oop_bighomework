@@ -19,6 +19,7 @@
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 CPMScheduler::CPMScheduler() = default;
 
@@ -28,6 +29,7 @@ CPMScheduler::CPMScheduler() = default;
 //【参数】           Source（输入参数）：被拷贝的调度器对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 CPMScheduler::CPMScheduler(const CPMScheduler& Source) = default;
 
@@ -37,6 +39,7 @@ CPMScheduler::CPMScheduler(const CPMScheduler& Source) = default;
 //【参数】           Source（输入参数）：赋值来源的调度器对象。
 //【返回值】         返回自身引用，支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 CPMScheduler& CPMScheduler::operator=(const CPMScheduler& Source) = default;
 
@@ -46,6 +49,7 @@ CPMScheduler& CPMScheduler::operator=(const CPMScheduler& Source) = default;
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 CPMScheduler::~CPMScheduler() = default;
 
@@ -114,6 +118,7 @@ ScheduleResult CPMScheduler::Calculate(Project& TargetProject) const
 //                   EarliestStarts（输出参数）：最早开始时间数组。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void CPMScheduler::InitializeEarliestStarts(
     const Project& SourceProject,
@@ -141,6 +146,7 @@ void CPMScheduler::InitializeEarliestStarts(
 //                   EarliestFinishes（输出参数）：最早完成时间数组。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void CPMScheduler::RunForwardPass(
     Project& TargetProject,
@@ -180,6 +186,7 @@ void CPMScheduler::RunForwardPass(
 //                   Result（输出参数）：待写入总工期的调度结果。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void CPMScheduler::SetDurationFromEF(
     const std::vector<int>& EarliestFinishes,
@@ -204,6 +211,7 @@ void CPMScheduler::SetDurationFromEF(
 //                   ProjectDuration（输入参数）：项目总工期。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void CPMScheduler::InitializeLatestTimes(
     Project& TargetProject,
@@ -237,6 +245,7 @@ void CPMScheduler::InitializeLatestTimes(
 //                   LatestFinishes（输入/输出参数）：最晚完成时间数组。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void CPMScheduler::RunBackwardPass(
     Project& TargetProject,
@@ -289,6 +298,7 @@ void CPMScheduler::RunBackwardPass(
 //                   Result（输出参数）：待填充任务时间表与关键任务的调度结果。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-07
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void CPMScheduler::CollectScheduleResult(
     Project& TargetProject,

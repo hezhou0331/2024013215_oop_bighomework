@@ -12,6 +12,7 @@
 //【参数】           Name（输入参数）：任务名称，不允许为空字符串。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 MilestoneTask::MilestoneTask(const std::string& Name)
     : Task(Name)
@@ -24,6 +25,7 @@ MilestoneTask::MilestoneTask(const std::string& Name)
 //【参数】           Source（输入参数）：被拷贝的里程碑任务对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 MilestoneTask::MilestoneTask(const MilestoneTask& Source) = default;
 
@@ -33,6 +35,7 @@ MilestoneTask::MilestoneTask(const MilestoneTask& Source) = default;
 //【参数】           Source（输入参数）：赋值来源的里程碑任务对象。
 //【返回值】         返回自身引用，支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 MilestoneTask& MilestoneTask::operator=(const MilestoneTask& Source)
     = default;
@@ -43,6 +46,7 @@ MilestoneTask& MilestoneTask::operator=(const MilestoneTask& Source)
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 MilestoneTask::~MilestoneTask() = default;
 
@@ -52,6 +56,7 @@ MilestoneTask::~MilestoneTask() = default;
 //【参数】           无
 //【返回值】         int，恒为 0，单位：天。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 int MilestoneTask::GetDuration() const
 {
@@ -64,6 +69,7 @@ int MilestoneTask::GetDuration() const
 //【参数】           无
 //【返回值】         bool，恒为 false，表示里程碑不可占用资源。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 bool MilestoneTask::IsResourceAllocatable() const
 {
@@ -76,6 +82,7 @@ bool MilestoneTask::IsResourceAllocatable() const
 //【参数】           无
 //【返回值】         std::unique_ptr<Task>，指向新建里程碑任务副本的独占指针。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 std::unique_ptr<Task> MilestoneTask::Clone() const
 {

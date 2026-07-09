@@ -12,6 +12,7 @@
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectRepository::ProjectRepository()
     : m_CurrentProject("UntitledProject")
@@ -24,6 +25,7 @@ ProjectRepository::ProjectRepository()
 //【参数】           Source（输入参数）：作为拷贝来源的项目仓库对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectRepository::ProjectRepository(const ProjectRepository& Source)
     = default;
@@ -34,6 +36,7 @@ ProjectRepository::ProjectRepository(const ProjectRepository& Source)
 //【参数】           Source（输入参数）：作为赋值来源的项目仓库对象。
 //【返回值】         ProjectRepository&，返回自身引用以支持连续赋值。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectRepository& ProjectRepository::operator=(
     const ProjectRepository& Source) = default;
@@ -44,6 +47,7 @@ ProjectRepository& ProjectRepository::operator=(
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 ProjectRepository::~ProjectRepository() = default;
 
@@ -53,6 +57,7 @@ ProjectRepository::~ProjectRepository() = default;
 //【参数】           无
 //【返回值】         Project&，当前项目的可修改引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 Project& ProjectRepository::GetCurrentProject()
 {
@@ -65,6 +70,7 @@ Project& ProjectRepository::GetCurrentProject()
 //【参数】           无
 //【返回值】         const Project&，当前项目的只读引用。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 const Project& ProjectRepository::GetCurrentProject() const
 {
@@ -77,6 +83,7 @@ const Project& ProjectRepository::GetCurrentProject() const
 //【参数】           SourceProject（输入参数）：用于替换当前项目的项目对象。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ProjectRepository::SetCurrentProject(const Project& SourceProject)
 {
@@ -90,6 +97,7 @@ void ProjectRepository::SetCurrentProject(const Project& SourceProject)
 //                   处于有效但未指定状态。
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ProjectRepository::SetCurrentProject(Project&& SourceProject)
 {
@@ -102,6 +110,7 @@ void ProjectRepository::SetCurrentProject(Project&& SourceProject)
 //【参数】           无
 //【返回值】         无。
 //【开发者及日期】   刘江宇, 2026-07-05
+//【更改记录】       无
 //-------------------------------------------------------------------------------------------------------------------
 void ProjectRepository::Reset()
 {
